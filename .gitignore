@@ -1,0 +1,20 @@
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+*.sw[op]
+.sass-cache
+.sass-cache/*
+assets/uploads/*
+theme.sublime-project
+theme.sublime-workspace
+node_modules
+bower_components
+*~
+
+# build files
+node_modules/
+vendor/
+composer.lock
