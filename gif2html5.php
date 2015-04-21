@@ -18,3 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+
+define( 'GIF2HTML5_VERSION', '0.1-alpha' );
+
+require_once dirname( __FILE__ ) . '/inc/class-gif2html5.php';
+
+add_action( 'init', function() {
+	$gif2html5 = Gif2Html5::get_instance();
+} );
