@@ -27,6 +27,7 @@ class Gif2Html5 {
 	private function setup_actions() {
 		add_action( 'add_attachment', array( $this, 'action_add_attachment' ) );
 		add_action( 'edit_attachment', array( $this, 'action_edit_attachment' ) );
+		add_action( 'admin_post_nopriv_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 	}
 
 	public function action_add_attachment( $attachment_id ) {
@@ -75,8 +76,7 @@ class Gif2Html5 {
 		$webhook_url = add_query_arg(
 			array(
 				'action' => $this->convert_action,
-				'attachment_id' => $attachment_id,
-				'attachment_hash' => wp_hash( $attachment_id ),
+				'code' => wp_hash( $attachment_id ),
 				),
 			admin_url( 'admin-post.php' )
 			);
@@ -90,5 +90,28 @@ class Gif2Html5 {
 				) ),
 			);
 		return wp_remote_post( $api_url, $args );
+	}
+
+	/**
+	 * Handle the response from the conversion API.
+	 */
+	public function action_admin_post_convert_cb() {
+
+		$attachment_id = absint( $_POST['attachment_id'] );
+		if ( ! $attachment_id ) {
+			return;
+		}
+
+		$code = sanitize_text_field( $_GET['code'] );
+		if ( ! $code || $code !== wp_hash( $attachment_id ) ) {
+			return;
+		}
+
+		$mp4_url = esc_url_raw( $_POST['mp4'] );
+		$snapshot_url = esc_url_raw( $_POST['snapshot'] );
+		if ( $mp4_url && $snapshot_url ) {
+			update_post_meta( $attachment_id, $this->mp4_url_meta_key, $mp4_url );
+			update_post_meta( $attachment_id, $this->snapshot_url_meta_key, $snapshot_url );
+		}
 	}
 }
