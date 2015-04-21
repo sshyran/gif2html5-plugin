@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Gif2html5
+ * Plugin Name: Gif2Html5
  * Version: v0.1-alpha
  * Description: Convert animated gifs to mp4s.
  * Author: Fusion Engineering and community
@@ -23,6 +23,8 @@ define( 'GIF2HTML5_VERSION', '0.1-alpha' );
 
 require_once dirname( __FILE__ ) . '/inc/class-gif2html5.php';
 
-add_action( 'init', function() {
-	$gif2html5 = Gif2Html5::get_instance();
-} );
+function Gif2Html5() {
+	return Gif2Html5::get_instance();
+}
+
+add_action( 'init', 'Gif2Html5' );

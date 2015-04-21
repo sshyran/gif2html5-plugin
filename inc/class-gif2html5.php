@@ -5,7 +5,9 @@ class Gif2Html5 {
 	private $plugin_url;
 	private static $instance = null;
 
+	private $api_url_option = 'gif2html5_api_url';
 	private $mp4_url_meta_key = 'gif2html5_mp4_url';
+	private $convert_action = 'gif2html5_convert_cb';
 	private $snapshot_url_meta_key = 'gif2html5_snapshot_url';
 
 	public static function get_instance() {
@@ -28,84 +30,65 @@ class Gif2Html5 {
 	}
 
 	public function action_add_attachment( $attachment_id ) {
-		return $this->convert_attachment( $attachment_id );
+		return $this->send_conversion_request( $attachment_id );
 	}
 
 	public function action_edit_attachment( $attachment_id ) {
-		return $this->convert_attachment( $attachment_id );
+		return $this->send_conversion_request( $attachment_id );
 	}
 
 	/**
-     * Convert the attachment.
-     *
-     * @param int $attachment_id   Attachment ID.
-     */
-	public function convert_attachment( $attachment_id ) {
-		$mime_type = get_post_mime_type( $attachment_id );
-		if ( 'image/gif' !== $mime_type ) {
-			return;
-		}
-		$attachment_url = wp_get_attachment_url( $attachment_id );
-		if ( ! $attachment_url ) {
-			return;
-		}
-		// TODO: Make this async
-		$convert_result = $this->convert( $attachment_url );
-		if ( ! $convert_result || is_wp_error( $convert_result ) ) {
-			return;
-		}
-		if ( isset( $convert_result['mp4'] ) && isset( $convert_result['snapshot'] ) ) {
-			 update_post_meta( $attachment_id, $this->mp4_url_meta_key, $convert_result['mp4'] );
-			 update_post_meta( $attachment_id, $this->snapshot_url_meta_key, $convert_result['snapshot'] );
-		}
-	}
-
-	private function get_api_settings() {
-		return get_option( 'gif2html5_options_api' );
-	}
-
-	/**
-	 * Convert the image from .gif to mp4.
+	 * Indicate whether the attachment can be converted.
 	 *
-	 * @param string $source_url   The URL of the source image.
+	 * @param int $attachment_id the ID of the attachment.
+	 * @return boolean true if the attachment is of the proper type, false otherwise.
+	 */
+	public function mime_type_check( $attachment_id ) {
+		return 'image/gif' === get_post_mime_type( $attachment_id );
+	}
+
+	/**
+	 * Send the request to convert the image from .gif to mp4.
+	 *
+	 * @param int $attachment_id   The unique ID of the attachment.
 	 * @return array an array with conversion results. Includes:
 	 *     mp4: URL to mp4 file.
 	 *     snapshot: URL to snapshot image.
 	 */
-	public function convert( $source_url ) {
-		$api_settings = $this->get_api_settings();
-		if ( ! isset( $api_settings['base_url'] ) ) {
+	public function send_conversion_request( $attachment_id ) {
+
+		if ( ! $this->mime_type_check( $attachment_id ) ) {
 			return;
 		}
-		$api_url = trailingslashit( $api_settings['base_url'] ) . 'convert';
-		$args = array(
-			'headers' => array( 'Content-Type' => 'application/json' ),
-			'body' => json_encode( array(
-				'url' => $source_url,
-				) ),
-			);
-		$response = wp_remote_post( $api_url, $args );
-		$response_code = wp_remote_retrieve_response_code( $response );
-		$response_body = wp_remote_retrieve_body( $response );
-		if ( is_wp_error( $response_body ) ) {
-			return $response_body;
-		}
-		if ( ! in_array( $response_code, array( 200, 201 ) ) ) {
-			return new WP_Error(
-				'gif2html5-invalid-api-response',
-				__( 'Received invalid response code: ' . $response_code, 'gif2html5' )
-				);
+
+		$attachment_url = wp_get_attachment_url( $attachment_id );
+		if ( ! $attachment_url ) {
+			return;
 		}
 
-		$result = null;
-		try {
-			$result = json_decode( $response_body, true );
-		} catch ( Exception $e ) {
-			return new WP_Error(
-				'gif2html5-invalid-api-response',
-				__( 'Error decoding response: ' . $e->getMessage(), 'gif2html5' )
-				);
+		$api_url = get_option( $this->api_url_option );
+
+		if ( ! $api_url ) {
+			return;
 		}
-		return $result;
+
+		$webhook_url = add_query_arg(
+			array(
+				'action' => $this->convert_action,
+				'attachment_id' => $attachment_id,
+				'attachment_hash' => wp_hash( $attachment_id ),
+				),
+			admin_url( 'admin-post.php' )
+			);
+
+		$args = array(
+			'headers' => array( 'Content-Type' => 'application/json' ),
+			'blocking' => false,
+			'body' => json_encode( array(
+				'url' => $attachment_url,
+				'webhook' => $webhook_url,
+				) ),
+			);
+		return wp_remote_post( $api_url, $args );
 	}
 }
