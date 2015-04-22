@@ -4,9 +4,18 @@ class Gif2Html5Test extends WP_UnitTestCase {
 
 	private $gif_id;
 	private $png_id;
+	private $request_r;
+	private $request_url;
+
+	private $api_url = 'http://example-api.com/convert';
 
 	function setUp() {
 		parent::setUp();
+
+		update_option( 'gif2html5_api_url', $this->api_url );
+
+		add_filter( 'pre_http_request', array( $this, 'filter_pre_http_request' ), 10, 3 );
+
 		$this->gif_id = $this->factory->attachment->create_object(
 			'test.gif',
 			0,
@@ -17,6 +26,26 @@ class Gif2Html5Test extends WP_UnitTestCase {
 			0,
 			array( 'post_mime_type' => 'image/png' )
 			);
+
+		$this->request_r = null;
+		$this->request_url = null;
+	}
+
+	function tearDown() {
+		parent::tearDown();
+		delete_option( 'gif2html5_api_url' );
+		remove_filter( 'pre_http_request', array( $this, 'filter_pre_http_request' ) );
+		$this->gif_id = null;
+		$this->png_id = null;
+		$this->request_r = null;
+		$this->request_url = null;
+	}
+
+
+	function filter_pre_http_request( $pre, $r, $url ) {
+		$this->request_r = $r;
+		$this->request_url = $url;
+		return true;
 	}
 
 	function testGif2Html5FunctionReturnsCorrectClass() {
@@ -41,6 +70,16 @@ class Gif2Html5Test extends WP_UnitTestCase {
 
 	function testMimeTypeCheckForPngIsFalse() {
 		$this->assertFalse( Gif2Html5()->mime_type_check( $this->png_id ) );
+	}
+
+	function testPostTriggeredOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertNotEmpty( $this->request_url );
+	}
+
+	function testPostNotTriggeredOnPngAdd() {
+		do_action( 'add_attachment', $this->png_id );
+		$this->assertEmpty( $this->request_url );
 	}
 
 }
