@@ -72,7 +72,7 @@ class Gif2Html5Test extends WP_UnitTestCase {
 		$this->assertFalse( Gif2Html5()->mime_type_check( $this->png_id ) );
 	}
 
-	function testRequestUrlNotEmptyOnGifAdd() {
+	function testRequestUrlOnGifAdd() {
 		do_action( 'add_attachment', $this->gif_id );
 		$this->assertNotEmpty( $this->request_url );
 	}
@@ -80,6 +80,75 @@ class Gif2Html5Test extends WP_UnitTestCase {
 	function testRequestUrlCorrectOnGifAdd() {
 		do_action( 'add_attachment', $this->gif_id );
 		$this->assertEquals( $this->api_url, $this->request_url );
+	}
+
+	function testRequestArgsOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertNotEmpty( $this->api_url, $this->request_r );
+	}
+
+	function testRequestMethodOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertEquals( 'POST', $this->request_r['method'] );
+	}
+
+	function testBlockingFalseOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertFalse( $this->request_r['blocking'] );
+	}
+
+	function testContentTypeOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertEquals( 'application/json', $this->request_r['headers']['Content-Type'] );
+	}
+
+	function testSourceUrlOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$this->assertEquals( $data['url'], wp_get_attachment_url( $this->gif_id ) );
+	}
+
+	function testWebhookBaseUrlOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$this->assertEquals( strtok( $webhook, '?' ), admin_url( 'admin-post.php' ) );
+	}
+
+	function testWebhookParamsLengthOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$params = array();
+		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
+		$this->assertEquals( 3, count( $params ) );
+	}
+
+	function testWebhookActionParamOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$params = array();
+		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
+		$this->assertEquals( 'gif2html5_convert_cb', $params['action'] );
+	}
+
+	function testWebhookAttachmentIdParamOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$params = array();
+		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
+		$this->assertEquals( $this->gif_id, $params['attachment_id'] );
+	}
+
+	function testWebhookCodeParamOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$params = array();
+		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
+		$this->assertEquals( wp_hash( $this->gif_id ), $params['code'] );
 	}
 
 	function testRequestUrlNotEmptyOnGifEdit() {
@@ -92,6 +161,75 @@ class Gif2Html5Test extends WP_UnitTestCase {
 		$this->assertEquals( $this->api_url, $this->request_url );
 	}
 
+	function testRequestArgsOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertNotEmpty( $this->api_url, $this->request_r );
+	}
+
+	function testRequestMethodOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertEquals( 'POST', $this->request_r['method'] );
+	}
+
+	function testBlockingFalseOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertFalse( $this->request_r['blocking'] );
+	}
+
+	function testContentTypeOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertEquals( 'application/json', $this->request_r['headers']['Content-Type'] );
+	}
+
+	function testSourceUrlOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$this->assertEquals( $data['url'], wp_get_attachment_url( $this->gif_id ) );
+	}
+
+	function testWebhookBaseUrlOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$this->assertEquals( strtok( $webhook, '?' ), admin_url( 'admin-post.php' ) );
+	}
+
+	function testWebhookParamsLengthOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$params = array();
+		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
+		$this->assertEquals( 3, count( $params ) );
+	}
+
+	function testWebhookActionParamOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$params = array();
+		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
+		$this->assertEquals( 'gif2html5_convert_cb', $params['action'] );
+	}
+
+	function testWebhookAttachmentIdParamOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$params = array();
+		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
+		$this->assertEquals( $this->gif_id, $params['attachment_id'] );
+	}
+
+	function testWebhookCodeParamOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$webhook = $data['webhook'];
+		$params = array();
+		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
+		$this->assertEquals( wp_hash( $this->gif_id ), $params['code'] );
+	}
+
 	function testRequestUrlEmptyOnPngAdd() {
 		do_action( 'add_attachment', $this->png_id );
 		$this->assertEmpty( $this->request_url );
@@ -100,6 +238,16 @@ class Gif2Html5Test extends WP_UnitTestCase {
 	function testRequestUrlEmptyOnPngEdit() {
 		do_action( 'edit_attachment', $this->png_id );
 		$this->assertEmpty( $this->request_url );
+	}
+
+	function testRequestArgsEmptyOnPngAdd() {
+		do_action( 'add_attachment', $this->png_id );
+		$this->assertEmpty( $this->request_r );
+	}
+
+	function testRequestArgsEmptyOnPngEdit() {
+		do_action( 'edit_attachment', $this->png_id );
+		$this->assertEmpty( $this->request_r );
 	}
 
 }

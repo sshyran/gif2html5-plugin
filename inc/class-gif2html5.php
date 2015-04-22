@@ -72,6 +72,7 @@ class Gif2Html5 {
 		$webhook_url = add_query_arg(
 			array(
 				'action' => $this->convert_action,
+				'attachment_id' => $attachment_id,
 				'code' => wp_hash( $attachment_id ),
 				),
 			admin_url( 'admin-post.php' )
