@@ -250,4 +250,31 @@ class Gif2Html5Test extends WP_UnitTestCase {
 		$this->assertEmpty( $this->request_r );
 	}
 
+	function testWebhookCallbackSetsMp4Url() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEquals( $mp4, 'http://example.com/mp4.mp4' );
+	}
+
+	function testWebhookCallbackSetsSnapshotUrl() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
+		$this->assertEquals( $snapshot, 'http://example.com/snapshot.png' );
+	}
+
+
 }

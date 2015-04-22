@@ -23,6 +23,7 @@ class Gif2Html5 {
 	private function setup_actions() {
 		add_action( 'add_attachment', array( $this, 'action_add_attachment' ) );
 		add_action( 'edit_attachment', array( $this, 'action_edit_attachment' ) );
+		add_action( 'admin_post_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 		add_action( 'admin_post_nopriv_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 	}
 
@@ -107,8 +108,38 @@ class Gif2Html5 {
 		$mp4_url = esc_url_raw( $_POST['mp4'] );
 		$snapshot_url = esc_url_raw( $_POST['snapshot'] );
 		if ( $mp4_url && $snapshot_url ) {
-			update_post_meta( $attachment_id, $this->mp4_url_meta_key, $mp4_url );
-			update_post_meta( $attachment_id, $this->snapshot_url_meta_key, $snapshot_url );
+			$this->set_mp4_url( $attachment_id, $mp4_url );
+			$this->set_snapshot_url( $attachment_id, $snapshot_url );
 		}
 	}
+
+	/**
+	 * Get the mp4 URL for the given attachment.
+	 */
+	public function get_mp4_url( $attachment_id ) {
+		return get_post_meta( $attachment_id, $this->mp4_url_meta_key, true );
+	}
+
+	/**
+	 * Set the mp4 URL for the given attachment.
+	 */
+	public function set_mp4_url( $attachment_id, $mp4_url ) {
+		return update_post_meta( $attachment_id, $this->mp4_url_meta_key, $mp4_url );
+	}
+
+
+	/**
+	 * Get the snapshot URL for the given attachment.
+	 */
+	public function get_snapshot_url( $attachment_id ) {
+		return get_post_meta( $attachment_id, $this->snapshot_url_meta_key, true );
+	}
+
+	/**
+	 * Set the snapshot URL for the given attachment.
+	 */
+	public function set_snapshot_url( $attachment_id, $snapshot_url ) {
+		return update_post_meta( $attachment_id, $this->snapshot_url_meta_key, $snapshot_url );
+	}
+
 }
