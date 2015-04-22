@@ -276,5 +276,17 @@ class Gif2Html5Test extends WP_UnitTestCase {
 		$this->assertEquals( $snapshot, 'http://example.com/snapshot.png' );
 	}
 
+	function testWebhookCallbackFailsOnBadCode() {
+		$_GET['code'] = wp_hash( $this->gif_id ) . 'x';
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEmpty( $mp4 );
+	}
 
 }
