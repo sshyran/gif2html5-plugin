@@ -326,5 +326,23 @@ class Gif2Html5Test extends WP_UnitTestCase {
 		$this->assertEmpty( $mp4 );
 	}
 
+	function testWebhookCallbackSetsMp4UrlNopriv() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_nopriv_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEquals( $mp4, 'http://example.com/mp4.mp4' );
+	}
+
+	function testGetAttachmentImageSrc() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
+		$image = wp_get_attachment_image( $this->gif_id );
+		$this->assertContains( 'src="http://example.com/test.mp4"', $image );
+	}
 
 }

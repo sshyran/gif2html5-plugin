@@ -25,6 +25,7 @@ class Gif2Html5 {
 		add_action( 'edit_attachment', array( $this, 'action_edit_attachment' ) );
 		add_action( 'admin_post_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 		add_action( 'admin_post_nopriv_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
+		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'filter_wp_get_attachment_image_attributes' ), 10, 2 );
 	}
 
 	public function action_add_attachment( $attachment_id ) {
@@ -148,6 +149,16 @@ class Gif2Html5 {
 	 */
 	public function set_snapshot_url( $attachment_id, $snapshot_url ) {
 		return update_post_meta( $attachment_id, $this->snapshot_url_meta_key, $snapshot_url );
+	}
+
+	/**
+	 * Set the image src attribute to the mp4 URL if one exists.
+	 */
+	public function filter_wp_get_attachment_image_attributes( $attr, $attachment ) {
+		if ( $mp4_url = $this->get_mp4_url( $attachment->ID ) ) {
+			$attr['src'] = $mp4_url;
+		}
+		return $attr;
 	}
 
 }
