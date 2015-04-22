@@ -289,4 +289,42 @@ class Gif2Html5Test extends WP_UnitTestCase {
 		$this->assertEmpty( $mp4 );
 	}
 
+	function testWebhookCallbackFailsOnNoSnapshot() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEmpty( $mp4 );
+	}
+
+	function testWebhookCallbackFailsOnNoMp4() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
+		$this->assertEmpty( $snapshot );
+	}
+
+	function testWebhookChecksMimeType() {
+		$_GET['code'] = wp_hash( $this->png_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->png_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->png_id );
+		$this->assertEmpty( $mp4 );
+	}
+
+
 }

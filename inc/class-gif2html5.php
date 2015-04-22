@@ -105,6 +105,14 @@ class Gif2Html5 {
 			return;
 		}
 
+		if ( ! isset( $_POST['mp4'] ) || ! isset( $_POST['snapshot'] ) ) {
+			return;
+		}
+
+		if ( ! $this->mime_type_check( $attachment_id ) ) {
+			return;
+		}
+
 		$mp4_url = esc_url_raw( $_POST['mp4'] );
 		$snapshot_url = esc_url_raw( $_POST['snapshot'] );
 		if ( $mp4_url && $snapshot_url ) {
