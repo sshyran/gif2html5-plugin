@@ -72,13 +72,33 @@ class Gif2Html5Test extends WP_UnitTestCase {
 		$this->assertFalse( Gif2Html5()->mime_type_check( $this->png_id ) );
 	}
 
-	function testPostTriggeredOnGifAdd() {
+	function testRequestUrlNotEmptyOnGifAdd() {
 		do_action( 'add_attachment', $this->gif_id );
 		$this->assertNotEmpty( $this->request_url );
 	}
 
-	function testPostNotTriggeredOnPngAdd() {
+	function testRequestUrlCorrectOnGifAdd() {
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertEquals( $this->api_url, $this->request_url );
+	}
+
+	function testRequestUrlNotEmptyOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertNotEmpty( $this->request_url );
+	}
+
+	function testRequestUrlCorrectOnGifEdit() {
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertEquals( $this->api_url, $this->request_url );
+	}
+
+	function testRequestUrlEmptyOnPngAdd() {
 		do_action( 'add_attachment', $this->png_id );
+		$this->assertEmpty( $this->request_url );
+	}
+
+	function testRequestUrlEmptyOnPngEdit() {
+		do_action( 'edit_attachment', $this->png_id );
 		$this->assertEmpty( $this->request_url );
 	}
 
