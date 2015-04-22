@@ -1,8 +1,6 @@
 <?php
 class Gif2Html5 {
 
-	private $plugin_dir;
-	private $plugin_url;
 	private static $instance = null;
 
 	private $api_url_option = 'gif2html5_api_url';
@@ -20,8 +18,6 @@ class Gif2Html5 {
 
 	private function __construct() {
 		$this->plugin_version = GIF2HTML5_VERSION;
-		$this->plugin_dir     = plugin_dir_path( dirname( __FILE__ ) );
-		$this->plugin_url     = plugin_dir_url( dirname( __FILE__ ) );
 	}
 
 	private function setup_actions() {
