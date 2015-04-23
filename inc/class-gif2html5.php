@@ -5,6 +5,7 @@ class Gif2Html5 {
 
 	private $api_url_option = 'gif2html5_api_url';
 	private $convert_action = 'gif2html5_convert_cb';
+	private $conversion_response_pending_meta_key = 'gif2html5_conversion_response_pending';
 	private $mp4_url_meta_key = 'gif2html5_mp4_url';
 	private $snapshot_url_meta_key = 'gif2html5_snapshot_url';
 
@@ -92,6 +93,10 @@ class Gif2Html5 {
 			return;
 		}
 
+		if ( $pending = $this->conversion_response_pending( $attachment_id ) ) {
+			return;
+		}
+
 		$webhook_url = add_query_arg(
 			array(
 				'action' => $this->convert_action,
@@ -109,6 +114,7 @@ class Gif2Html5 {
 				'webhook' => $webhook_url,
 				) ),
 			);
+		$this->set_conversion_response_pending( $attachment_id );
 		return wp_remote_post( $api_url, $args );
 	}
 
@@ -134,6 +140,8 @@ class Gif2Html5 {
 		if ( ! $this->mime_type_check( $attachment_id ) ) {
 			return;
 		}
+
+		$this->unset_conversion_response_pending( $attachment_id );
 
 		$mp4_url = esc_url_raw( $_POST['mp4'] );
 		$snapshot_url = esc_url_raw( $_POST['snapshot'] );
@@ -170,6 +178,27 @@ class Gif2Html5 {
 	 */
 	public function set_snapshot_url( $attachment_id, $snapshot_url ) {
 		return update_post_meta( $attachment_id, $this->snapshot_url_meta_key, $snapshot_url );
+	}
+
+	/**
+	 * Indicate whether the conversion response is still pending for the specified attachment.
+	 */
+	public function conversion_response_pending( $attachment_id ) {
+		return (bool) get_post_meta( $attachment_id, $this->conversion_response_pending_meta_key, true );
+	}
+
+	/**
+	 * Turn on the conversion response pending flag.
+	 */
+	public function set_conversion_response_pending( $attachment_id ) {
+		return update_post_meta( $attachment_id, $this->conversion_response_pending_meta_key, true );
+	}
+
+	/**
+	 * Turn off the conversion response pending flag.
+	 */
+	public function unset_conversion_response_pending( $attachment_id ) {
+		return delete_post_meta( $attachment_id, $this->conversion_response_pending_meta_key );
 	}
 
 	/**
