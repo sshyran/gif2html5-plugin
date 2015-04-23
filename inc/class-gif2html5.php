@@ -27,18 +27,23 @@ class Gif2Html5 {
 
 	public function action_attachment_submitbox_misc_actions() {
 		$attachment_id = get_the_id();
+
+		if ( ! $this->mime_type_check( $attachment_id ) ) {
+			return;
+		}
+
 		if ( $mp4 = $this->get_mp4_url( $attachment_id ) ) {
 			?>
 			<div class="misc-pub-section misc-pub-gif2html5-mp4-url">
-				<label for="gif2html5_mp4_url"><?php _e( 'Mp4 URL', 'gif2html5' ) ?>:</label>
-				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_mp4_url" value="<?php esc_attr_e( $mp4 ) ?>"/>
+				<label for="gif2html5_mp4_url"><?php esc_html_e( 'Mp4 URL', 'gif2html5' ) ?>:</label>
+				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_mp4_url" value="<?php echo esc_attr( $mp4 ) ?>"/>
 			</div><?php
 		}
 		if ( $snapshot = $this->get_snapshot_url( $attachment_id ) ) {
 			?>
 			<div class="misc-pub-section misc-pub-gif2html5-snapshot-url">
-				<label for="gif2html5_snapshot_url"><?php _e( 'Snapshot URL', 'gif2html5' ) ?>:</label>
-				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_snapshot_url" value="<?php esc_attr_e( $snapshot ) ?>"/>
+				<label for="gif2html5_snapshot_url"><?php esc_html_e( 'Snapshot URL', 'gif2html5' ) ?>:</label>
+				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_snapshot_url" value="<?php echo esc_attr( $snapshot ) ?>"/>
 			</div><?php
 		}
 
