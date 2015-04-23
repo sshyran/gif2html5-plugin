@@ -4,8 +4,8 @@ class Gif2Html5 {
 	private static $instance = null;
 
 	private $api_url_option = 'gif2html5_api_url';
-	private $mp4_url_meta_key = 'gif2html5_mp4_url';
 	private $convert_action = 'gif2html5_convert_cb';
+	private $mp4_url_meta_key = 'gif2html5_mp4_url';
 	private $snapshot_url_meta_key = 'gif2html5_snapshot_url';
 
 	public static function get_instance() {
@@ -16,16 +16,32 @@ class Gif2Html5 {
 		return self::$instance;
 	}
 
-	private function __construct() {
-		$this->plugin_version = GIF2HTML5_VERSION;
-	}
-
 	private function setup_actions() {
 		add_action( 'add_attachment', array( $this, 'action_add_attachment' ) );
 		add_action( 'edit_attachment', array( $this, 'action_edit_attachment' ) );
 		add_action( 'admin_post_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 		add_action( 'admin_post_nopriv_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'filter_wp_get_attachment_image_attributes' ), 10, 2 );
+		add_action( 'attachment_submitbox_misc_actions', array( $this, 'action_attachment_submitbox_misc_actions' ), 20 );
+	}
+
+	public function action_attachment_submitbox_misc_actions() {
+		$attachment_id = get_the_id();
+		if ( $mp4 = $this->get_mp4_url( $attachment_id ) ) {
+			?>
+			<div class="misc-pub-section misc-pub-gif2html5-mp4-url">
+				<label for="gif2html5_mp4_url"><?php _e( 'Mp4 URL', 'gif2html5' ) ?>:</label>
+				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_mp4_url" value="<?php esc_attr_e( $mp4 ) ?>"/>
+			</div><?php
+		}
+		if ( $snapshot = $this->get_snapshot_url( $attachment_id ) ) {
+			?>
+			<div class="misc-pub-section misc-pub-gif2html5-snapshot-url">
+				<label for="gif2html5_snapshot_url"><?php _e( 'Snapshot URL', 'gif2html5' ) ?>:</label>
+				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_snapshot_url" value="<?php esc_attr_e( $snapshot ) ?>"/>
+			</div><?php
+		}
+
 	}
 
 	public function action_add_attachment( $attachment_id ) {

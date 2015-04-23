@@ -19,8 +19,6 @@
  * GNU General Public License for more details.
  */
 
-define( 'GIF2HTML5_VERSION', '0.1-alpha' );
-
 require_once dirname( __FILE__ ) . '/inc/class-gif2html5.php';
 
 function Gif2Html5() {
