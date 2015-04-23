@@ -33,28 +33,37 @@ class Gif2Html5 {
 			return;
 		}
 
-		if ( $mp4 = $this->get_mp4_url( $attachment_id ) ) {
-			?>
-			<div class="misc-pub-section misc-pub-gif2html5-mp4-url">
-				<label for="gif2html5_mp4_url"><?php esc_html_e( 'Mp4 URL', 'gif2html5' ) ?>:</label>
-				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_mp4_url" value="<?php echo esc_attr( $mp4 ) ?>"/>
-			</div><?php
-		}
-		if ( $snapshot = $this->get_snapshot_url( $attachment_id ) ) {
-			?>
-			<div class="misc-pub-section misc-pub-gif2html5-snapshot-url">
-				<label for="gif2html5_snapshot_url"><?php esc_html_e( 'Snapshot URL', 'gif2html5' ) ?>:</label>
-				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_snapshot_url" value="<?php echo esc_attr( $snapshot ) ?>"/>
-			</div><?php
+		$mp4 = $this->get_mp4_url( $attachment_id );
+		$snapshot = $this->get_snapshot_url( $attachment_id );
+
+		if ( ! $mp4 || ! $snapshot ) {
+			return;
 		}
 
+		?>
+		<div class="misc-pub-section misc-pub-gif2html5-mp4-url">
+			<label for="gif2html5_mp4_url"><?php esc_html_e( 'Mp4 URL', 'gif2html5' ) ?>:</label>
+			<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_mp4_url" value="<?php echo esc_attr( $mp4 ) ?>"/>
+		</div>
+		<div class="misc-pub-section misc-pub-gif2html5-snapshot-url">
+			<label for="gif2html5_snapshot_url"><?php esc_html_e( 'Snapshot URL', 'gif2html5' ) ?>:</label>
+			<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_snapshot_url" value="<?php echo esc_attr( $snapshot ) ?>"/>
+		</div>
+		<div class="misc-pub-section misc-pub-gif2html5-force-conversion">
+			<input type="submit" name="gif2html5_force_conversion" class="button button-primary" value="<?php esc_attr_e( 'Regenerate MP4', 'gif2html5' ) ?>"/>
+		</div>
+		<?php
 	}
 
 	public function action_add_attachment( $attachment_id ) {
-		return $this->send_conversion_request( $attachment_id, ! empty( $_POST['gif2html5_force_conversion'] ) );
+		return $this->handle_save( $attachment_id );
 	}
 
 	public function action_edit_attachment( $attachment_id ) {
+		return $this->handle_save( $attachment_id );
+	}
+
+	private function handle_save( $attachment_id ) {
 		return $this->send_conversion_request( $attachment_id, ! empty( $_POST['gif2html5_force_conversion'] ) );
 	}
 

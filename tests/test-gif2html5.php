@@ -427,22 +427,32 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 
 	function test_action_attachment_submitbox_contains_mp4_label() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/test.png' );
 		$this->assertContains( 'Mp4 URL:', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 	function test_action_attachment_submitbox_contains_mp4_url() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/test.png' );
 		$this->assertContains( 'http://example.com/test.mp4', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 	function test_action_attachment_submitbox_contains_snapshot_label() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
 		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/test.png' );
 		$this->assertContains( 'Snapshot URL:', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 	function test_action_attachment_submitbox_contains_snapshot_url() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
 		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/test.png' );
 		$this->assertContains( 'http://example.com/test.png', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+	}
+
+	function test_action_attachment_submitbox_contains_force_conversion_button() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
+		$this->assertContains( 'Regenerate MP4', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 }
