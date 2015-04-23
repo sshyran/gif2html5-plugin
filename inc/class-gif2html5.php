@@ -33,13 +33,26 @@ class Gif2Html5 {
 			return;
 		}
 
+		if ( $this->conversion_response_pending( $attachment_id ) ) {
+			?>
+			<div class="misc-pub-section misc-pub-gif2html5-conversion-response-pending">
+				<p><?php esc_html_e( 'MP4 conversion pending...', 'gif2html5' ) ?></p>
+				<input type="submit" name="gif2html5_unset_conversion_response_pending" value="<?php esc_attr_e( 'Stop waiting for MP4 conversion' ) ?>" class="button"/>
+			</div><?php
+			return;
+		}
+
 		$mp4 = $this->get_mp4_url( $attachment_id );
 		$snapshot = $this->get_snapshot_url( $attachment_id );
 
 		if ( ! $mp4 || ! $snapshot ) {
+			?>
+			<div class="misc-pub-section misc-pub-gif2html5-generate-mp4">
+				<input type="submit" name="gif2html5_generate_mp4" value="<?php esc_attr_e( 'Generate MP4' ) ?>" class="button button-primary"/>
+			</div><?php
 			return;
 		}
-
+		
 		?>
 		<div class="misc-pub-section misc-pub-gif2html5-mp4-url">
 			<label for="gif2html5_mp4_url"><?php esc_html_e( 'Mp4 URL', 'gif2html5' ) ?>:</label>
@@ -64,6 +77,16 @@ class Gif2Html5 {
 	}
 
 	private function handle_save( $attachment_id ) {
+
+		if ( ! $this->mime_type_check( $attachment_id ) ) {
+			return;
+		}
+
+		if ( ! empty( $_POST['gif2html5_unset_conversion_response_pending'] ) ) {
+			$this->unset_conversion_response_pending( $attachment_id );
+			return;
+		}
+
 		return $this->send_conversion_request( $attachment_id, ! empty( $_POST['gif2html5_force_conversion'] ) );
 	}
 

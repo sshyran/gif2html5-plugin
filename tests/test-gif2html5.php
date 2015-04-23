@@ -178,6 +178,20 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertTrue( $this->request_r && $this->request_url );
 	}
 
+	function test_pending_flag_unset_on_add() {
+		Gif2Html5()->set_conversion_response_pending( $this->gif_id );
+		$_POST['gif2html5_unset_conversion_response_pending'] = true;
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertFalse( Gif2Html5()->conversion_response_pending( $this->gif_id ) );
+	}
+
+	function test_pending_flag_unset_on_edit() {
+		Gif2Html5()->set_conversion_response_pending( $this->gif_id );
+		$_POST['gif2html5_unset_conversion_response_pending'] = true;
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertFalse( Gif2Html5()->conversion_response_pending( $this->gif_id ) );
+	}
+
 	function test_no_request_when_urls_exist_on_edit() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
 		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
@@ -453,6 +467,20 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
 		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
 		$this->assertContains( 'Regenerate MP4', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+	}
+
+	function test_action_attachment_submitbox_contains_pending_message() {
+		Gif2Html5()->set_conversion_response_pending( $this->gif_id );
+		$this->assertContains( 'MP4 conversion pending...', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+	}
+
+	function test_action_attachment_submitbox_contains_stop_waiting_button() {
+		Gif2Html5()->set_conversion_response_pending( $this->gif_id );
+		$this->assertContains( 'Stop waiting for MP4 conversion', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+	}
+
+	function test_action_attachment_submitbox_contains_generate_mp4_button() {
+		$this->assertContains( 'Generate MP4', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 }
