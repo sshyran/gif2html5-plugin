@@ -163,6 +163,36 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertFalse( $this->request_r || $this->request_url );
 	}
 
+	function test_no_request_when_urls_exist_on_add() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertFalse( $this->request_r || $this->request_url );
+	}
+
+	function test_request_when_urls_exist_and_force_on_add() {
+		$_POST['gif2html5_force_conversion'] = true;
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertTrue( $this->request_r && $this->request_url );
+	}
+
+	function test_no_request_when_urls_exist_on_edit() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertFalse( $this->request_r || $this->request_url );
+	}
+
+	function test_request_when_urls_exist_and_force_on_edit() {
+		$_POST['gif2html5_force_conversion'] = true;
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
+		do_action( 'edit_attachment', $this->gif_id );
+		$this->assertTrue( $this->request_r && $this->request_url );
+	}
+
 	function test_request_url_not_empty_on_gif_edit() {
 		do_action( 'edit_attachment', $this->gif_id );
 		$this->assertNotEmpty( $this->request_url );

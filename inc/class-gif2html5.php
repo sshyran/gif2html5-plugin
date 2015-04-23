@@ -51,11 +51,11 @@ class Gif2Html5 {
 	}
 
 	public function action_add_attachment( $attachment_id ) {
-		return $this->send_conversion_request( $attachment_id );
+		return $this->send_conversion_request( $attachment_id, ! empty( $_POST['gif2html5_force_conversion'] ) );
 	}
 
 	public function action_edit_attachment( $attachment_id ) {
-		return $this->send_conversion_request( $attachment_id );
+		return $this->send_conversion_request( $attachment_id, ! empty( $_POST['gif2html5_force_conversion'] ) );
 	}
 
 	/**
@@ -76,7 +76,7 @@ class Gif2Html5 {
 	 *     mp4: URL to mp4 file.
 	 *     snapshot: URL to snapshot image.
 	 */
-	public function send_conversion_request( $attachment_id ) {
+	public function send_conversion_request( $attachment_id, $force_conversion = false ) {
 
 		if ( ! $this->mime_type_check( $attachment_id ) ) {
 			return;
@@ -93,7 +93,11 @@ class Gif2Html5 {
 			return;
 		}
 
-		if ( $pending = $this->conversion_response_pending( $attachment_id ) ) {
+		if ( $this->conversion_response_pending( $attachment_id ) ) {
+			return;
+		}
+
+		if ( ! $force_conversion && $this->get_mp4_url( $attachment_id ) && $this->get_snapshot_url( $attachment_id ) ) {
 			return;
 		}
 
