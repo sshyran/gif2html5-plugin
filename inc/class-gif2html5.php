@@ -52,7 +52,7 @@ class Gif2Html5 {
 			</div><?php
 			return;
 		}
-		
+
 		?>
 		<div class="misc-pub-section misc-pub-gif2html5-mp4-url">
 			<label for="gif2html5_mp4_url"><?php esc_html_e( 'Mp4 URL', 'gif2html5' ) ?>:</label>
@@ -140,7 +140,7 @@ class Gif2Html5 {
 				'code' => wp_hash( $attachment_id ),
 				),
 			admin_url( 'admin-post.php' )
-			);
+		);
 
 		$args = array(
 			'headers' => array( 'Content-Type' => 'application/json' ),
@@ -165,7 +165,7 @@ class Gif2Html5 {
 		}
 
 		$code = sanitize_text_field( $_GET['code'] );
-		if ( ! $code || $code !== wp_hash( $attachment_id ) ) {
+		if ( ! $code || wp_hash( $attachment_id ) !== $code ) {
 			return;
 		}
 

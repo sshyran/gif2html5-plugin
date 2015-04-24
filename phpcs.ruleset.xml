@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="GIF2HTML5">
+	<description>Sniffs for the coding standards of the GIF2HTML5 plugin</description>
+
+	<rule ref="WordPress-VIP">
+		<exclude name="WordPress.VIP.SuperGlobalInputUsage" />
+		<exclude name="WordPress.VIP.ValidatedSanitizedInput" />
+	</rule>
+</ruleset>
