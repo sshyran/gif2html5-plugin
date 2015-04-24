@@ -151,7 +151,7 @@ class Gif2Html5 {
 				) ),
 			);
 		$this->set_conversion_response_pending( $attachment_id );
-		return wp_remote_post( $api_url, $args );
+		return wp_remote_post( esc_url_raw( $api_url ), $args );
 	}
 
 	/**
