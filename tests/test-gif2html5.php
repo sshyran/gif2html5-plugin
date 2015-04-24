@@ -20,12 +20,12 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 			'test.gif',
 			0,
 			array( 'post_mime_type' => 'image/gif' )
-			);
+		);
 		$this->png_id = $this->factory->attachment->create_object(
 			'test.png',
 			0,
 			array( 'post_mime_type' => 'image/png' )
-			);
+		);
 
 		$this->request_r = null;
 		$this->request_url = null;

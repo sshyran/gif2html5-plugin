@@ -21,8 +21,9 @@
 
 require_once dirname( __FILE__ ) . '/inc/class-gif2html5.php';
 
+// @codingStandardsIgnoreStart
 function Gif2Html5() {
 	return Gif2Html5::get_instance();
 }
-
+// @codingStandardsIgnoreEnd
 add_action( 'init', 'Gif2Html5' );
