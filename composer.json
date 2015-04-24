@@ -1,0 +1,21 @@
+{
+    "name": "fusioneng/gif2html5-plugin",
+    "description": "Seamlessly serve animated GIFs as more performant MP4s",
+    "type": "wordpress-plugin",
+    "homepage": "https://github.com/fusioneng/gif2html5-plugin",
+    "authors": [
+        {
+            "name": "Fusion",
+            "email": "tech@fusion.net",
+            "homepage": "http://fusion.net"
+        }
+    ],
+    "require-dev": {
+        "wp-coding-standards/wpcs": "dev-develop"
+    },
+    "scripts": {
+        "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs",
+        "post-update-cmd" : "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs"
+    }
+}
+
