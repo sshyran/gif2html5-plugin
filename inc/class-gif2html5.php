@@ -48,7 +48,7 @@ class Gif2Html5 {
 		if ( ! $mp4 || ! $snapshot ) {
 			?>
 			<div class="misc-pub-section misc-pub-gif2html5-generate-mp4">
-				<input type="submit" name="gif2html5_generate_mp4" value="<?php esc_attr_e( 'Generate MP4', 'gif2html5'  ) ?>" class="button button-primary"/>
+				<input type="submit" name="gif2html5_generate_mp4" value="<?php esc_attr_e( 'Generate MP4', 'gif2html5' ) ?>" class="button button-primary"/>
 			</div><?php
 			return;
 		}
