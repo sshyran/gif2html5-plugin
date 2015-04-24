@@ -37,7 +37,7 @@ class Gif2Html5 {
 			?>
 			<div class="misc-pub-section misc-pub-gif2html5-conversion-response-pending">
 				<p><?php esc_html_e( 'MP4 conversion pending...', 'gif2html5' ) ?></p>
-				<input type="submit" name="gif2html5_unset_conversion_response_pending" value="<?php esc_attr_e( 'Stop waiting for MP4 conversion' ) ?>" class="button"/>
+				<input type="submit" name="gif2html5_unset_conversion_response_pending" value="<?php esc_attr_e( 'Stop waiting for MP4 conversion', 'gif2html5' ) ?>" class="button"/>
 			</div><?php
 			return;
 		}
@@ -48,7 +48,7 @@ class Gif2Html5 {
 		if ( ! $mp4 || ! $snapshot ) {
 			?>
 			<div class="misc-pub-section misc-pub-gif2html5-generate-mp4">
-				<input type="submit" name="gif2html5_generate_mp4" value="<?php esc_attr_e( 'Generate MP4' ) ?>" class="button button-primary"/>
+				<input type="submit" name="gif2html5_generate_mp4" value="<?php esc_attr_e( 'Generate MP4', 'gif2html5'  ) ?>" class="button button-primary"/>
 			</div><?php
 			return;
 		}
