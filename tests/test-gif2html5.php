@@ -8,6 +8,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	private $request_url;
 
 	private $api_url = 'http://example-api.com/convert';
+	private $api_key = 'abc123';
 
 	function setUp() {
 		parent::setUp();
@@ -481,6 +482,19 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 
 	function test_action_attachment_submitbox_contains_generate_mp4_button() {
 		$this->assertContains( 'Generate MP4', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+	}
+
+	function test_api_key_empty_without_option_set() {
+		Gif2Html5()->send_conversion_request( $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$this->assertFalse( array_key_exists( 'api_key', $data ) );
+	}
+
+	function test_api_key_correct_with_option_set() {
+		update_option( 'gif2html5_api_key', $this->api_key );
+		Gif2Html5()->send_conversion_request( $this->gif_id );
+		$data = json_decode( $this->request_r['body'], true );
+		$this->assertEquals( $data['api_key'], $this->api_key );
 	}
 
 }
