@@ -3,6 +3,7 @@ class Gif2Html5 {
 
 	private static $instance = null;
 
+	private $api_key_option = 'gif2html5_api_key';
 	private $api_url_option = 'gif2html5_api_url';
 	private $convert_action = 'gif2html5_convert_cb';
 	private $conversion_response_pending_meta_key = 'gif2html5_conversion_response_pending';
@@ -142,14 +143,22 @@ class Gif2Html5 {
 			admin_url( 'admin-post.php' )
 		);
 
+		$data = array(
+			'url' => $attachment_url,
+			'webhook' => $webhook_url,
+		);
+
+		$api_key = get_option( $this->api_key_option );
+		if ( ! empty( $api_key ) ) {
+			$data['api_key'] = $api_key;
+		}
+
 		$args = array(
 			'headers' => array( 'Content-Type' => 'application/json' ),
 			'blocking' => false,
-			'body' => json_encode( array(
-				'url' => $attachment_url,
-				'webhook' => $webhook_url,
-				) ),
-			);
+			'body' => json_encode( $data ),
+		);
+
 		$this->set_conversion_response_pending( $attachment_id );
 		return wp_remote_post( esc_url_raw( $api_url ), $args );
 	}
