@@ -24,7 +24,7 @@ class Gif2Html5 {
 		add_action( 'admin_post_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 		add_action( 'admin_post_nopriv_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 		add_action( 'attachment_submitbox_misc_actions', array( $this, 'action_attachment_submitbox_misc_actions' ), 20 );
-		add_filter( 'the_content', array( $this, 'img_to_video' ) );
+		add_filter( 'the_content', array( $this, 'filter_the_content_img_to_video' ), 99 );
 	}
 
 	public function action_attachment_submitbox_misc_actions() {
@@ -247,6 +247,13 @@ class Gif2Html5 {
 	}
 
 	/**
+	 * Replace img with video tags in post content.
+	 */
+	public function filter_the_content_img_to_video( $html ) {
+		return $this->img_to_video( $html );
+	}
+
+	/**
 	 * Replace img tags with video elements in the specified HTML.
 	 */
 	public function img_to_video( $html ) {
@@ -256,16 +263,19 @@ class Gif2Html5 {
 			$html,
 			$matches
 		);
+		if ( empty( $matches[1] ) ) {
+			return $html;
+		}
 		$post_ids = array();
-		if ( ! empty( $matches[1] ) ) {
-			foreach ( $matches[1] as $post_id ) {
-				$post_ids[] = absint( $post_id );
-			}
+		foreach ( $matches[1] as $post_id ) {
+			$post_ids[] = absint( $post_id );
 		}
 		$post_ids = array_filter( array_unique( $post_ids ) );
 		if ( empty( $post_ids ) ) {
 			return $html;
 		}
+		// This query should cache post data,
+		// so that we don't have to fetch posts individually.
 		new WP_Query( array(
 			'post__in' => $post_ids,
 			'post_type' => 'attachment',
