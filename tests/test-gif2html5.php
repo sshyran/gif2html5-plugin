@@ -425,12 +425,6 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertEquals( $mp4, 'http://example.com/mp4.mp4' );
 	}
 
-	function test_get_attachment_image_src() {
-		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
-		$image = wp_get_attachment_image( $this->gif_id );
-		$this->assertContains( 'src="http://example.com/test.mp4"', $image );
-	}
-
 	function get_submitbox_misc_actions_html( $attachment_id ) {
 		global $post;
 		$post = get_post( $attachment_id );
@@ -495,6 +489,70 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		Gif2Html5()->send_conversion_request( $this->gif_id );
 		$data = json_decode( $this->request_r['body'], true );
 		$this->assertEquals( $data['api_key'], $this->api_key );
+	}
+
+	function test_img_to_video_contains_video_tag() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
+		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
+		. ' alt="Test GIF" width="100" height="200" /> and done.</p>';
+		$new_html = Gif2Html5()->img_to_video( $html );
+		$this->assertContains( '<video', $new_html );
+	}
+
+	function test_img_to_video_contains_video_url() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
+		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
+		. ' alt="Test GIF" width="100" height="200" /> and done.</p>';
+		$new_html = Gif2Html5()->img_to_video( $html );
+		$this->assertRegExp( '|<source [^>]*src="http://example.com/mp4.mp4"|', $new_html );
+	}
+
+	function test_img_to_video_contains_width() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
+		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
+		. ' alt="Test GIF" width="100" height="200" /> and done.</p>';
+		$new_html = Gif2Html5()->img_to_video( $html );
+		$this->assertRegexp( '/<video [^>]*width="100"/', $new_html );
+	}
+
+	function test_img_to_video_contains_height() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
+		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
+		. ' alt="Test GIF" width="100" height="200" /> and done.</p>';
+		$new_html = Gif2Html5()->img_to_video( $html );
+		$this->assertRegexp( '/<video [^>]*height="200"/', $new_html );
+	}
+
+	function test_img_to_video_contains_snapshot() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
+		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
+		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
+		. ' alt="Test GIF" width="100" height="200" /> and done.</p>';
+		$new_html = Gif2Html5()->img_to_video( $html );
+		$this->assertRegexp( '|<video [^>]*poster="http://example.com/snapshot.png"|', $new_html );
+	}
+
+	function test_img_to_video_contains_gif2html5_video_class() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
+		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
+		. ' alt="Test GIF" width="100" height="200" /> and done.</p>';
+		$new_html = Gif2Html5()->img_to_video( $html );
+		$this->assertRegexp( '/<video [^>]*class="[^"]*gif2html5-video[ "]/', $new_html );
+	}
+
+	function test_img_to_video_contains_gif2html5_video_id_class() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
+		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
+		. ' alt="Test GIF" width="100" height="200" /> and done.</p>';
+		$new_html = Gif2Html5()->img_to_video( $html );
+		$this->assertRegexp( '/<video [^>]*class="[^"]*gif2html5-video-' . $this->gif_id . '[ "]/', $new_html );
 	}
 
 }

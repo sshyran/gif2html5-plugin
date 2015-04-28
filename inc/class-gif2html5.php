@@ -23,8 +23,8 @@ class Gif2Html5 {
 		add_action( 'edit_attachment', array( $this, 'action_edit_attachment' ) );
 		add_action( 'admin_post_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
 		add_action( 'admin_post_nopriv_' . $this->convert_action, array( $this, 'action_admin_post_convert_cb' ) );
-		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'filter_wp_get_attachment_image_attributes' ), 10, 2 );
 		add_action( 'attachment_submitbox_misc_actions', array( $this, 'action_attachment_submitbox_misc_actions' ), 20 );
+		add_filter( 'the_content', array( $this, 'filter_the_content_img_to_video' ), 99 );
 	}
 
 	public function action_attachment_submitbox_misc_actions() {
@@ -247,13 +247,97 @@ class Gif2Html5 {
 	}
 
 	/**
-	 * Set the image src attribute to the mp4 URL if one exists.
+	 * Replace img with video tags in post content.
 	 */
-	public function filter_wp_get_attachment_image_attributes( $attr, $attachment ) {
-		if ( $mp4_url = $this->get_mp4_url( $attachment->ID ) ) {
-			$attr['src'] = $mp4_url;
+	public function filter_the_content_img_to_video( $html ) {
+		return $this->img_to_video( $html );
+	}
+
+	/**
+	 * Replace img tags with video elements in the specified HTML.
+	 */
+	public function img_to_video( $html ) {
+		$matches = array();
+		preg_match_all(
+			'/<img [^>]*class="[^"]*wp-image-(\d+)[^>]*>/i',
+			$html,
+			$matches
+		);
+		if ( empty( $matches[1] ) ) {
+			return $html;
 		}
-		return $attr;
+		$post_ids = array();
+		foreach ( $matches[1] as $post_id ) {
+			$post_ids[] = absint( $post_id );
+		}
+		$post_ids = array_filter( array_unique( $post_ids ) );
+		if ( empty( $post_ids ) ) {
+			return $html;
+		}
+		// This query should cache post data,
+		// so that we don't have to fetch posts individually.
+		new WP_Query( array(
+			'post__in' => $post_ids,
+			'post_type' => 'attachment',
+			'posts_per_page' => count( $post_ids ),
+		) );
+		for ( $i = 0; $i < count( $matches[0] ); $i++ ) {
+			$post_id = absint( $matches[1][ $i ] );
+			if ( empty( $post_id ) ) {
+				continue;
+			}
+			if ( ! $this->get_mp4_url( $post_id ) ) {
+				continue;
+			}
+			$img_tag = $matches[0][ $i ];
+			$attributes = $this->get_tag_attributes(
+				$img_tag,
+				array( 'width', 'height' )
+			);
+			$video_tag = $this->video_tag( $post_id, $attributes );
+			if ( empty( $video_tag ) ) {
+				continue;
+			}
+			$html = str_replace( $img_tag, $video_tag, $html );
+		}
+		return $html;
+	}
+
+	private function get_tag_attributes( $tag, $att_names ) {
+		$attributes = array();
+		$matches = array();
+		preg_match_all(
+			'/(' . join( '|', $att_names ) . ')="([^"]+)"/i',
+			$tag,
+			$matches
+		);
+		for ( $i = 0; $i < count( $matches[0] ); $i++ ) {
+			$attributes[ $matches[1][ $i ] ] = $matches[2][ $i ];
+		}
+		return $attributes;
+	}
+
+	private function attributes_string( $attributes ) {
+		$parts = array();
+		foreach ( $attributes as $k => $v ) {
+			$parts[] = $k . '="' . $v . '"';
+		}
+		return join( ' ', $parts );
+	}
+
+	public function video_tag( $id, $attributes = array() ) {
+		$mp4_url = $this->get_mp4_url( $id );
+		if ( empty( $mp4_url ) ) {
+			return false;
+		}
+		$snapshot_url = $this->get_snapshot_url( $id );
+		if ( ! empty( $snapshot_url ) ) {
+			$attributes['poster'] = esc_attr( $snapshot_url );
+		}
+		$attributes['class'] = esc_attr( 'gif2html5-video gif2html5-video-' . $id );
+		return '<video '
+		. trim( $this->attributes_string( $attributes ) . ' controls' )
+		. '><source src="' . esc_attr( $mp4_url ) . '" type="video/mp4"></video>';
 	}
 
 }
