@@ -320,7 +320,7 @@ class Gif2Html5 {
 	private function attributes_string( $attributes ) {
 		$parts = array();
 		foreach ( $attributes as $k => $v ) {
-			$parts[] = $k . '="' . $v . '"';
+			$parts[] = sanitize_key( $k ) . '="' . esc_attr( $v ) . '"';
 		}
 		return join( ' ', $parts );
 	}
@@ -332,12 +332,12 @@ class Gif2Html5 {
 		}
 		$snapshot_url = $this->get_snapshot_url( $id );
 		if ( ! empty( $snapshot_url ) ) {
-			$attributes['poster'] = esc_attr( $snapshot_url );
+			$attributes['poster'] = esc_url( $snapshot_url );
 		}
 		$attributes['class'] = esc_attr( 'gif2html5-video gif2html5-video-' . $id );
 		return '<video '
 		. trim( $this->attributes_string( $attributes ) . ' controls' )
-		. '><source src="' . esc_attr( $mp4_url ) . '" type="video/mp4"></video>';
+		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4"></video>';
 	}
 
 }
