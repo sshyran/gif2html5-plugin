@@ -313,15 +313,23 @@ class Gif2Html5 {
 	}
 
 	private function get_tag_attributes( $tag, $att_names ) {
+		$html = '<html><body>' . $tag . '</body></html>';
+		$doc = new DomDocument();
+		$doc->loadHtml( $html );
+		$body = $doc->getElementsByTagName( 'body' )->item( 0 );
+		if ( empty( $body ) ) {
+			return array();
+		}
+		$element = $body->firstChild;
+		if ( empty( $element ) || ! method_exists( $element, 'getAttribute' ) ) {
+			return array();
+		}
 		$attributes = array();
-		$matches = array();
-		preg_match_all(
-			'/(' . join( '|', $att_names ) . ')="([^"]+)"/i',
-			$tag,
-			$matches
-		);
-		for ( $i = 0; $i < count( $matches[0] ); $i++ ) {
-			$attributes[ $matches[1][ $i ] ] = $matches[2][ $i ];
+		foreach ( $att_names as $att_name ) {
+			$att_value = $element->getAttribute( $att_name );
+			if ( ! empty( $att_value ) ) {
+				$attributes[ $att_name ] = $att_value;
+			}
 		}
 		return $attributes;
 	}
