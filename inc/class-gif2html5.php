@@ -294,7 +294,15 @@ class Gif2Html5 {
 			if ( in_array( $img_tag, $replaced ) ) {
 				continue;
 			}
-			$video_tag = $this->video_tag( $post_id, $img_tag );
+			$attributes = $this->get_tag_attributes(
+				$img_tag,
+				array( 'width', 'height' )
+			);
+
+			$video_tag = $this->video_tag(
+				$post_id,
+				array( 'attributes' => $attributes, 'fallback' => $img_tag )
+			);
 			if ( empty( $video_tag ) ) {
 				continue;
 			}
@@ -326,23 +334,38 @@ class Gif2Html5 {
 		return join( ' ', $parts );
 	}
 
-	public function video_tag( $id, $img_tag ) {
-		$attributes = $this->get_tag_attributes(
-			$img_tag,
-			array( 'width', 'height' )
-		);
+	/**
+	 * Returns the video element for an attachment.
+	 *
+	 * 
+	 * @param int $id the attachment ID.
+	 * @param array $options An array of display options.
+	 *                       Options may include:
+	 *                       'attributes': attributes used for the video element.
+	 *                       'fallback':   any HTML that should be placed at the end of the video element
+	 *                       as a fallback for browsers that do not support the video element.
+	 * @return string the HTML of the video element, or false if the video element could
+	 *                not be created for the given attachment.
+	 */
+	public function video_tag( $id, $options = array() ) {
 		$mp4_url = $this->get_mp4_url( $id );
 		if ( empty( $mp4_url ) ) {
 			return false;
 		}
-		$snapshot_url = $this->get_snapshot_url( $id );
-		if ( ! empty( $snapshot_url ) ) {
-			$attributes['poster'] = esc_url( $snapshot_url );
+		$attributes = isset( $options['attributes'] ) ? $options['attributes'] : array();
+		if ( ! isset( $attributes['poster'] ) ) {
+			$snapshot_url = $this->get_snapshot_url( $id );
+			if ( ! empty( $snapshot_url ) ) {
+				$attributes['poster'] = esc_url( $snapshot_url );
+			}
 		}
-		$attributes['class'] = esc_attr( 'gif2html5-video gif2html5-video-' . $id );
+		if ( ! isset( $attributes['class'] ) ) {
+			$attributes['class'] = esc_attr( 'gif2html5-video gif2html5-video-' . $id );
+		}
+		$fallback = isset( $options['fallback'] ) ? $options['fallback'] : '';
 		return '<video '
 		. trim( $this->attributes_string( $attributes ) . ' autoplay loop' )
-		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4">' . $img_tag . '</video>';
+		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4">' . $fallback . '</video>';
 	}
 
 }
