@@ -198,6 +198,9 @@ class Gif2Html5 {
 
 	/**
 	 * Get the mp4 URL for the given attachment.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @return string The mp4 URL or, an empty string if no mp4 URL exists.
 	 */
 	public function get_mp4_url( $attachment_id ) {
 		return get_post_meta( $attachment_id, $this->mp4_url_meta_key, true );
@@ -205,6 +208,9 @@ class Gif2Html5 {
 
 	/**
 	 * Set the mp4 URL for the given attachment.
+	 *
+ 	 * @param int $attachment_id The attachment ID.
+ 	 * @param string $mp4_url The mp4 URL.
 	 */
 	public function set_mp4_url( $attachment_id, $mp4_url ) {
 		return update_post_meta( $attachment_id, $this->mp4_url_meta_key, $mp4_url );
@@ -213,6 +219,9 @@ class Gif2Html5 {
 
 	/**
 	 * Get the snapshot URL for the given attachment.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @return string The snapshot URL, or an empty string if no snapshot URL exists.
 	 */
 	public function get_snapshot_url( $attachment_id ) {
 		return get_post_meta( $attachment_id, $this->snapshot_url_meta_key, true );
@@ -220,13 +229,19 @@ class Gif2Html5 {
 
 	/**
 	 * Set the snapshot URL for the given attachment.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @param string $snapshot_url The URL of the snapshot.
 	 */
 	public function set_snapshot_url( $attachment_id, $snapshot_url ) {
 		return update_post_meta( $attachment_id, $this->snapshot_url_meta_key, $snapshot_url );
 	}
 
 	/**
-	 * Indicate whether the conversion response is still pending for the specified attachment.
+	 * Indicate whether the conversion response is still pending.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @return bool true if conversion response is still pending, false otherwise.
 	 */
 	public function conversion_response_pending( $attachment_id ) {
 		return (bool) get_post_meta( $attachment_id, $this->conversion_response_pending_meta_key, true );
@@ -234,6 +249,8 @@ class Gif2Html5 {
 
 	/**
 	 * Turn on the conversion response pending flag.
+	 *
+	 * @param int $attachment_id The attachment ID.
 	 */
 	public function set_conversion_response_pending( $attachment_id ) {
 		return update_post_meta( $attachment_id, $this->conversion_response_pending_meta_key, true );
@@ -241,20 +258,25 @@ class Gif2Html5 {
 
 	/**
 	 * Turn off the conversion response pending flag.
+	 *
+	 * @param int $attachment_id The attachment ID.
 	 */
 	public function unset_conversion_response_pending( $attachment_id ) {
 		return delete_post_meta( $attachment_id, $this->conversion_response_pending_meta_key );
 	}
 
 	/**
-	 * Replace img with video tags in post content.
+	 * Replace img with video elements in post content.
 	 */
 	public function filter_the_content_img_to_video( $html ) {
 		return $this->img_to_video( $html );
 	}
 
 	/**
-	 * Replace img tags with video elements in the specified HTML.
+	 * Replace img elements with video elements in the specified HTML.
+	 *
+	 * @param string $html The input HTML.
+	 * @return string The HTML with img elements replaced by video elements.
 	 */
 	public function img_to_video( $html ) {
 		$matches = array();
@@ -290,30 +312,30 @@ class Gif2Html5 {
 			if ( ! $this->get_mp4_url( $post_id ) ) {
 				continue;
 			}
-			$img_tag = $matches[0][ $i ];
-			if ( in_array( $img_tag, $replaced ) ) {
+			$img_element = $matches[0][ $i ];
+			if ( in_array( $img_element, $replaced ) ) {
 				continue;
 			}
-			$attributes = $this->get_tag_attributes(
-				$img_tag,
+			$attributes = $this->get_element_attributes(
+				$img_element,
 				array( 'width', 'height' )
 			);
 
-			$video_tag = $this->video_tag(
+			$video_element = $this->get_video_element(
 				$post_id,
-				array( 'attributes' => $attributes, 'fallback' => $img_tag )
+				array( 'attributes' => $attributes, 'fallback' => $img_element )
 			);
-			if ( empty( $video_tag ) ) {
+			if ( empty( $video_element ) ) {
 				continue;
 			}
-			$html = str_replace( $img_tag, $video_tag, $html );
-			$replaced[] = $img_tag;
+			$html = str_replace( $img_element, $video_element, $html );
+			$replaced[] = $img_element;
 		}
 		return $html;
 	}
 
-	private function get_tag_attributes( $tag, $att_names ) {
-		$html = '<html><body>' . $tag . '</body></html>';
+	private function get_element_attributes( $element_html, $att_names ) {
+		$html = '<html><body>' . $element_html . '</body></html>';
 		$doc = new DomDocument();
 		$doc->loadHtml( $html );
 		$body = $doc->getElementsByTagName( 'body' )->item( 0 );
@@ -355,7 +377,7 @@ class Gif2Html5 {
 	 * @return string the HTML of the video element, or false if the video element could
 	 *                not be created for the given attachment.
 	 */
-	public function video_tag( $id, $options = array() ) {
+	public function get_video_element( $id, $options = array() ) {
 		$mp4_url = $this->get_mp4_url( $id );
 		if ( empty( $mp4_url ) ) {
 			return false;
