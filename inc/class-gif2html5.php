@@ -281,6 +281,7 @@ class Gif2Html5 {
 			'post_type' => 'attachment',
 			'posts_per_page' => count( $post_ids ),
 		) );
+		$replaced = array();
 		for ( $i = 0; $i < count( $matches[0] ); $i++ ) {
 			$post_id = absint( $matches[1][ $i ] );
 			if ( empty( $post_id ) ) {
@@ -290,15 +291,15 @@ class Gif2Html5 {
 				continue;
 			}
 			$img_tag = $matches[0][ $i ];
-			$attributes = $this->get_tag_attributes(
-				$img_tag,
-				array( 'width', 'height' )
-			);
-			$video_tag = $this->video_tag( $post_id, $attributes );
+			if ( in_array( $img_tag, $replaced ) ) {
+				continue;
+			}
+			$video_tag = $this->video_tag( $post_id, $img_tag );
 			if ( empty( $video_tag ) ) {
 				continue;
 			}
 			$html = str_replace( $img_tag, $video_tag, $html );
+			$replaced[] = $img_tag;
 		}
 		return $html;
 	}
@@ -325,7 +326,11 @@ class Gif2Html5 {
 		return join( ' ', $parts );
 	}
 
-	public function video_tag( $id, $attributes = array() ) {
+	public function video_tag( $id, $img_tag ) {
+		$attributes = $this->get_tag_attributes(
+			$img_tag,
+			array( 'width', 'height' )
+		);
 		$mp4_url = $this->get_mp4_url( $id );
 		if ( empty( $mp4_url ) ) {
 			return false;
@@ -336,8 +341,8 @@ class Gif2Html5 {
 		}
 		$attributes['class'] = esc_attr( 'gif2html5-video gif2html5-video-' . $id );
 		return '<video '
-		. trim( $this->attributes_string( $attributes ) . ' controls' )
-		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4"></video>';
+		. trim( $this->attributes_string( $attributes ) . ' autoplay loop' )
+		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4">' . $img_tag . '</video>';
 	}
 
 }
