@@ -209,8 +209,8 @@ class Gif2Html5 {
 	/**
 	 * Set the mp4 URL for the given attachment.
 	 *
- 	 * @param int $attachment_id The attachment ID.
- 	 * @param string $mp4_url The mp4 URL.
+	 * @param int $attachment_id The attachment ID.
+	 * @param string $mp4_url The mp4 URL.
 	 */
 	public function set_mp4_url( $attachment_id, $mp4_url ) {
 		return update_post_meta( $attachment_id, $this->mp4_url_meta_key, $mp4_url );
@@ -367,7 +367,7 @@ class Gif2Html5 {
 	/**
 	 * Returns the video element for an attachment.
 	 *
-	 * 
+	 *
 	 * @param int $id the attachment ID.
 	 * @param array $options An array of display options.
 	 *                       Options may include:
