@@ -318,7 +318,7 @@ class Gif2Html5 {
 			}
 			$attributes = $this->get_element_attributes(
 				$img_element,
-				array( 'width', 'height' )
+				array( 'width', 'height', 'class' )
 			);
 
 			$video_element = $this->get_video_element(
@@ -382,20 +382,28 @@ class Gif2Html5 {
 		if ( empty( $mp4_url ) ) {
 			return false;
 		}
-		$attributes = isset( $options['attributes'] ) ? $options['attributes'] : array();
+		$attributes = $this->get_video_element_attributes(
+			$id,
+			isset( $options['attributes'] ) ? $options['attributes'] : array()
+		);
+		$fallback = isset( $options['fallback'] ) ? $options['fallback'] : '';
+		return '<video '
+		. trim( $this->attributes_string( $attributes ) . ' autoplay loop' )
+		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4">' . $fallback . '</video>';
+	}
+
+	private function get_video_element_attributes( $id, $attributes = array() ) {
 		if ( ! isset( $attributes['poster'] ) ) {
 			$snapshot_url = $this->get_snapshot_url( $id );
 			if ( ! empty( $snapshot_url ) ) {
 				$attributes['poster'] = esc_url( $snapshot_url );
 			}
 		}
-		if ( ! isset( $attributes['class'] ) ) {
-			$attributes['class'] = esc_attr( 'gif2html5-video gif2html5-video-' . $id );
-		}
-		$fallback = isset( $options['fallback'] ) ? $options['fallback'] : '';
-		return '<video '
-		. trim( $this->attributes_string( $attributes ) . ' autoplay loop' )
-		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4">' . $fallback . '</video>';
+		$attributes['class'] = trim(
+			( isset( $attributes['class'] ) ? $attributes['class'] : '' )
+			. ' gif2html5-video gif2html5-video-' . $id
+		);
+		return $attributes;
 	}
 
 }
