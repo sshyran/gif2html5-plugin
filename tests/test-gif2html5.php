@@ -501,6 +501,21 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		return $new_html;
 	}
 
+	function test_img_to_video_persists_alignone_class() {
+		$html = $this->get_img_to_video_html();
+		$this->assertRegExp( '/<video [^>]*class="[^"]*alignnone[" ]/', $html );
+	}
+
+	function test_img_to_video_persists_size_full_class() {
+		$html = $this->get_img_to_video_html();
+		$this->assertRegExp( '/<video [^>]*class="[^"]*size-full[" ]/', $html );
+	}
+
+	function test_img_to_video_persists_wp_image_class() {
+		$html = $this->get_img_to_video_html();
+		$this->assertRegExp( '/<video [^>]*class="[^"]*wp-image-' . $this->gif_id . '[" ]/', $html );
+	}
+
 	function test_img_to_video_contains_video_tag() {
 		$html = $this->get_img_to_video_html();
 		$this->assertContains( '<video', $html );
