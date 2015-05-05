@@ -22,7 +22,7 @@ The gif2html5 plugin filters post content, and replaces `img` elements with `vid
 
 == Installation ==
 
-The standalone web application is a requirement. In order to set up the web application, you should clone it from the GitHub repository, and follow the setup instructions [here](link-to-gif2html-app-readme?).
+The standalone web application is a requirement. In order to set up the web application, you should clone it from the GitHub repository, and follow the setup instructions [here](https://github.com/fusioneng/gif2html5-app).
 
 Once you have your web application running. You will need to set the `gif2html5_api_url` option to the `/convert` endpoint of your web application.
 
@@ -32,7 +32,7 @@ If you have your web application running on Heroku, setting the `gif2html_api_ur
 set_option( 'gif2html5_api_url', 'https://my-web-app.herokuapp.com/convert' );
 ```
 
-If you've chosen to secure your web application with an API key (the GIF2HTML5_API_KEY setting described [here](link-to-description), then you will also need to set the `gif2html5_api_key` option.
+If you've chosen to secure your web application with an API key (the GIF2HTML5_API_KEY setting described [here](https://github.com/fusioneng/gif2html5-app#configuration)), then you will also need to set the `gif2html5_api_key` option.
 
 ```PHP
 set_option( 'gif2html_api_key', 'secret-api-key' );
