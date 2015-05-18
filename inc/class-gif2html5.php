@@ -11,7 +11,7 @@ class Gif2Html5 {
 	private $snapshot_url_meta_key = 'gif2html5_snapshot_url';
 
 	public static function get_instance() {
-		if ( null == self::$instance ) {
+		if ( null === self::$instance ) {
 			self::$instance = new self;
 			self::$instance->setup_actions();
 		}
@@ -316,15 +316,7 @@ class Gif2Html5 {
 			if ( in_array( $img_element, $replaced ) ) {
 				continue;
 			}
-			$attributes = $this->get_element_attributes(
-				$img_element,
-				array( 'width', 'height', 'class' )
-			);
-
-			$video_element = $this->get_video_element(
-				$post_id,
-				array( 'attributes' => $attributes, 'fallback' => $img_element )
-			);
+			$video_element = $this->img_to_video_element( $post_id, $img_element );
 			if ( empty( $video_element ) ) {
 				continue;
 			}
@@ -334,34 +326,23 @@ class Gif2Html5 {
 		return $html;
 	}
 
-	public function get_element_attributes( $element_html, $att_names ) {
-		$html = '<html><body>' . $element_html . '</body></html>';
-		$doc = new DomDocument();
-		$doc->loadHtml( $html );
-		$body = $doc->getElementsByTagName( 'body' )->item( 0 );
-		if ( empty( $body ) ) {
-			return array();
-		}
-		$element = $body->firstChild;
-		if ( empty( $element ) || ! method_exists( $element, 'getAttribute' ) ) {
-			return array();
-		}
-		$attributes = array();
-		foreach ( $att_names as $att_name ) {
-			$att_value = $element->getAttribute( $att_name );
-			if ( ! empty( $att_value ) ) {
-				$attributes[ $att_name ] = $att_value;
-			}
-		}
-		return $attributes;
-	}
+	/**
+	 * Returns the video HTML element that replaces the img element for the specified attachment.
+	 *
+	 * @param integer $id the attachment ID.
+	 * @param string $img_element the img element HTML.
+	 * @return string the video element HTML.
+	 */
+	public function img_to_video_element( $id, $img_element ) {
+		$attributes = $this->get_element_attributes(
+			$img_element,
+			array( 'width', 'height', 'class' )
+		);
 
-	private function attributes_string( $attributes ) {
-		$parts = array();
-		foreach ( $attributes as $k => $v ) {
-			$parts[] = sanitize_key( $k ) . '="' . esc_attr( $v ) . '"';
-		}
-		return join( ' ', $parts );
+		return $this->get_video_element(
+			$id,
+			array( 'attributes' => $attributes, 'fallback' => $img_element )
+		);
 	}
 
 	/**
@@ -390,6 +371,36 @@ class Gif2Html5 {
 		return '<video '
 		. trim( $this->attributes_string( $attributes ) . ' autoplay loop' )
 		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4">' . $fallback . '</video>';
+	}
+
+	private function get_element_attributes( $element_html, $att_names ) {
+		$html = '<html><body>' . $element_html . '</body></html>';
+		$doc = new DomDocument();
+		$doc->loadHtml( $html );
+		$body = $doc->getElementsByTagName( 'body' )->item( 0 );
+		if ( empty( $body ) ) {
+			return array();
+		}
+		$element = $body->firstChild;
+		if ( empty( $element ) || ! method_exists( $element, 'getAttribute' ) ) {
+			return array();
+		}
+		$attributes = array();
+		foreach ( $att_names as $att_name ) {
+			$att_value = $element->getAttribute( $att_name );
+			if ( ! empty( $att_value ) ) {
+				$attributes[ $att_name ] = $att_value;
+			}
+		}
+		return $attributes;
+	}
+
+	private function attributes_string( $attributes ) {
+		$parts = array();
+		foreach ( $attributes as $k => $v ) {
+			$parts[] = sanitize_key( $k ) . '="' . esc_attr( $v ) . '"';
+		}
+		return join( ' ', $parts );
 	}
 
 	private function get_video_element_attributes( $id, $attributes = array() ) {
