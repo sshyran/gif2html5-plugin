@@ -334,7 +334,7 @@ class Gif2Html5 {
 		return $html;
 	}
 
-	private function get_element_attributes( $element_html, $att_names ) {
+	public function get_element_attributes( $element_html, $att_names ) {
 		$html = '<html><body>' . $element_html . '</body></html>';
 		$doc = new DomDocument();
 		$doc->loadHtml( $html );
