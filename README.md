@@ -40,6 +40,7 @@ set_option( 'gif2html_api_key', 'secret-api-key' );
 
 Now you should be ready to use the plugin.
 
+
 ## Filters ##
 
 The plugin defines two filters.
