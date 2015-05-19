@@ -38,6 +38,16 @@ If you've chosen to secure your web application with an API key (the GIF2HTML5_A
 set_option( 'gif2html_api_key', 'secret-api-key' );
 ```
 
+Instead of storing these options directly in the database, it might be preferable to set them via a `pre_option_` filter like this:
+
+```PHP
+define( 'MYSITE_GIF2HTML5_API_URL', 'https://my-web-app.herokuapp.com/convert' );
+define( 'MYSITE_GIF2HTML5_API_KEY', 'secret-api-key' );
+...
+add_filter( 'pre_option_gif2html5_api_url', function() { return MYSITE_GIF2HTML5_API_URL } );
+add_filter( 'pre_option_gif2html5_api_key', function() { return MYSITE_GIF2HTML5_API_KEY } );
+```
+
 Now you should be ready to use the plugin.
 
 ## Filters ##
