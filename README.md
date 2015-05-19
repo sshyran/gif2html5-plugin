@@ -39,3 +39,11 @@ set_option( 'gif2html_api_key', 'secret-api-key' );
 ```
 
 Now you should be ready to use the plugin.
+
+## Filters ##
+
+The plugin defines two filters.
+
+The `gif2html5_mp4_url` can be used to modify the URL returned from the `Gif2Html5::get_mp4_url` method. Functions added to this filter take the URL as a first argument, and the attachment ID as a second optional argument.
+
+The `gif2html5_snapshot_url` can be used to modify the URL returned from the `Gif2Html5::get_snapshot_url` method. Functions added to this filter take the URL as a first argument, and the attachment ID as a second optional argument.
