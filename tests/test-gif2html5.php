@@ -335,7 +335,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertEquals( $mp4, 'http://example.com/mp4.mp4' );
 	}
 
-	function test_webhook_callback_sets_mp4_url_with_cloudfront() {
+	function test_webhook_callback_sets_mp4_url_with_filter_to_manipulate_url() {
 		$_GET['code'] = wp_hash( $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
@@ -343,9 +343,9 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
 
 		do_action( 'admin_post_gif2html5_convert_cb' );
-		add_filter('cloudfront_url', function() {
-			return 'assets.cloudfront.net';
-		});
+		add_filter('gif2html5_mp4_url', function($url) {
+			return 'http://assets.cloudfront.net/folder/mp4.mp4';
+		}, 10 ,1);
 
 		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
 		$this->assertEquals( $mp4, 'http://assets.cloudfront.net/folder/mp4.mp4' );
@@ -363,6 +363,24 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
 		$this->assertEquals( $snapshot, 'http://example.com/snapshot.png' );
 	}
+
+	function test_webhook_callback_sets_snapshot_url_with_filter_to_manipulate_url() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+		add_filter('gif2html5_snapshot_url', function($url) {
+			return 'http://assets.cloudfront.net/folder/snapshot.png';
+		}, 10 ,1);
+
+
+		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
+		$this->assertEquals( $snapshot, 'http://assets.cloudfront.net/folder/snapshot.png' );
+	}
+
 
 	function test_webhook_callback_unsets_pending_conversion_flag() {
 

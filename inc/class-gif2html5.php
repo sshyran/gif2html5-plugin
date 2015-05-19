@@ -203,14 +203,7 @@ class Gif2Html5 {
 	 * @return string The mp4 URL or, an empty string if no mp4 URL exists.
 	 */
 	public function get_mp4_url( $attachment_id ) {
-		$url =  get_post_meta( $attachment_id, $this->mp4_url_meta_key, true );
-		$cloudfront_url = apply_filters( 'cloudfront_url', '' );
-		if( $cloudfront_url ) {
-			$parsed_url = parse_url($url);
-			$paths = explode( '/', $parsed_url['path'] );
-			return $parsed_url['scheme'] . '://' . $cloudfront_url . '/' . implode( '/', array_slice( $paths, 2 ) );
-		}
-		return $url;
+		return apply_filters( 'gif2html5_mp4_url', get_post_meta( $attachment_id, $this->mp4_url_meta_key, true ), $attachment_id );	
 	}
 
 	/**
@@ -231,7 +224,7 @@ class Gif2Html5 {
 	 * @return string The snapshot URL, or an empty string if no snapshot URL exists.
 	 */
 	public function get_snapshot_url( $attachment_id ) {
-		return get_post_meta( $attachment_id, $this->snapshot_url_meta_key, true );
+		return apply_filters( 'gif2html5_snapshot_url', get_post_meta( $attachment_id, $this->snapshot_url_meta_key, true ) );
 	}
 
 	/**
