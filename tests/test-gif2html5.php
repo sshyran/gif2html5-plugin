@@ -376,7 +376,6 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 			return 'http://assets.cloudfront.net/folder/snapshot.png';
 		}, 10 ,1);
 
-
 		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
 		$this->assertEquals( $snapshot, 'http://assets.cloudfront.net/folder/snapshot.png' );
 	}
