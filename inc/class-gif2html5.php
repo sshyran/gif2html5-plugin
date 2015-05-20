@@ -197,7 +197,7 @@ class Gif2Html5 {
 		}
 
 		$code = sanitize_text_field( $_GET['code'] );
-		if ( ! $code || wp_hash( $attachment_id ) !== $code ) {
+		if ( ! $code || wp_hash( 'gif2html5-' . $attachment_id ) !== $code ) {
 			return;
 		}
 
