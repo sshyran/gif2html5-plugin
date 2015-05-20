@@ -161,7 +161,7 @@ class Gif2Html5 {
 			array(
 				'action' => $this->convert_action,
 				'attachment_id' => $attachment_id,
-				'code' => wp_hash( $attachment_id ),
+				'code' => wp_hash( 'gif2html5-' . $attachment_id ),
 				),
 			admin_url( 'admin-post.php' )
 		);
