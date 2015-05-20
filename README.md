@@ -66,7 +66,7 @@ define( 'MYSITE_GIF2HTML5_URL_DOMAIN', 'assets.mysite.com' );
 function replace_gif2html5_url( $url ) {
 	$parsed_url = parse_url($url);
 	$paths = explode( '/', $parsed_url['path'] );
-	return $parsed_url['scheme'] . '://' . GIF2HTML5_URL_DOMAIN . '/' . implode( '/', array_slice( $paths, 2 ) );
+	return $parsed_url['scheme'] . '://' . MYSITE_GIF2HTML5_URL_DOMAIN . '/' . implode( '/', array_slice( $paths, 2 ) );
 }
 add_filter( 'gif2html5_mp4_url', 'replace_gif2html5_url' );
 add_filter( 'gif2html5_snapshot_url', 'replace_gif2html5_url' );
