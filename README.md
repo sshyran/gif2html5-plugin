@@ -50,10 +50,24 @@ add_filter( 'pre_option_gif2html5_api_key', function() { return MYSITE_GIF2HTML5
 
 Now you should be ready to use the plugin.
 
-## Filters ##
+### Filters ###
 
 The plugin defines two filters.
 
 The `gif2html5_mp4_url` can be used to modify the URL returned from the `Gif2Html5::get_mp4_url` method. Functions added to this filter take the URL as a first argument, and the attachment ID as a second optional argument.
 
 The `gif2html5_snapshot_url` can be used to modify the URL returned from the `Gif2Html5::get_snapshot_url` method. Functions added to this filter take the URL as a first argument, and the attachment ID as a second optional argument.
+
+You might want to use these filters if you've configured a DNS name as an alias for the S3 bucket used by the image conversion service. Here's how you might handle that situation:
+
+```PHP
+define( 'MYSITE_GIF2HTML5_URL_DOMAIN', 'assets.mysite.com' );
+...
+function replace_gif2html5_url( $url ) {
+	$parsed_url = parse_url($url);
+	$paths = explode( '/', $parsed_url['path'] );
+	return $parsed_url['scheme'] . '://' . GIF2HTML5_URL_DOMAIN . '/' . implode( '/', array_slice( $paths, 2 ) );
+}
+add_filter( 'gif2html5_mp4_url', 'replace_gif2html5_url' );
+add_filter( 'gif2html5_snapshot_url', 'replace_gif2html5_url' );
+```
