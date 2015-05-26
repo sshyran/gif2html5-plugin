@@ -1,8 +1,8 @@
 <?php
 /**
- * Convert GIFs to MP4s
+ * Convert GIFs to videos 
  *
- * Converts GIFS to MP4s and replaces GIF HTML img elements with MP4 video elements.
+ * Converts GIFS to videos and replaces GIF HTML img elements with video elements.
  */
 class Gif2Html5 {
 
@@ -12,8 +12,26 @@ class Gif2Html5 {
 	private $api_url_option = 'gif2html5_api_url';
 	private $convert_action = 'gif2html5_convert_cb';
 	private $conversion_response_pending_meta_key = 'gif2html5_conversion_response_pending';
-	private $mp4_url_meta_key = 'gif2html5_mp4_url';
 	private $snapshot_url_meta_key = 'gif2html5_snapshot_url';
+
+	const VIDEO_TYPE_MP4 = 'mp4';
+	const VIDEO_TYPE_OGG = 'ogg';
+	const VIDEO_TYPE_WEBM = 'webm';
+
+	private $video_types = array(
+		self::VIDEO_TYPE_MP4 => array(
+			'label' => 'MP4',
+			'mime_type' => 'video/mp4',
+		),
+		self::VIDEO_TYPE_OGG => array(
+			'label' => 'Ogg',
+			'mime_type' => 'video/ogg',
+		),
+		self::VIDEO_TYPE_WEBM => array(
+			'label' => 'WebM',
+			'mime_type' => 'video/webm',
+		),
+	);
 
 	/**
 	 * Returns an instance of this class.
@@ -50,34 +68,42 @@ class Gif2Html5 {
 		if ( $this->conversion_response_pending( $attachment_id ) ) {
 			?>
 			<div class="misc-pub-section misc-pub-gif2html5-conversion-response-pending">
-				<p><?php esc_html_e( 'MP4 conversion pending...', 'gif2html5' ) ?></p>
-				<input type="submit" name="gif2html5_unset_conversion_response_pending" value="<?php esc_attr_e( 'Stop waiting for MP4 conversion', 'gif2html5' ) ?>" class="button"/>
+				<p><?php esc_html_e( 'Video conversion pending...', 'gif2html5' ) ?></p>
+				<input type="submit" name="gif2html5_unset_conversion_response_pending" value="<?php esc_attr_e( 'Stop waiting for video conversion', 'gif2html5' ) ?>" class="button"/>
 			</div><?php
 			return;
 		}
 
-		$mp4 = $this->get_mp4_url( $attachment_id );
-		$snapshot = $this->get_snapshot_url( $attachment_id );
 
-		if ( ! $mp4 || ! $snapshot ) {
+		if ( ! $this->has_video( $attachment_id ) ) {
 			?>
-			<div class="misc-pub-section misc-pub-gif2html5-generate-mp4">
-				<input type="submit" name="gif2html5_generate_mp4" value="<?php esc_attr_e( 'Generate MP4', 'gif2html5' ) ?>" class="button button-primary"/>
+			<div class="misc-pub-section misc-pub-gif2html5-generate-video">
+				<input type="submit" name="gif2html5_generate_video" value="<?php esc_attr_e( 'Generate Video', 'gif2html5' ) ?>" class="button button-primary"/>
 			</div><?php
 			return;
 		}
 
+		foreach ( $this->video_types as $video_type => $video_type_info ):
+			$video_url = $this->get_video_url( $attachment_id, $video_type );
+			if ( ! empty( $video_url ) ):
+				?>
+				<div class="misc-pub-section misc-pub-gif2html5-<?php echo esc_attr( $video_type ) ?>-url">
+					<label for="gif2html5_<?php echo esc_attr( $video_type ) ?>_url"><?php esc_html_e( $video_type_info['label'] . ' URL', 'gif2html5' ) ?>:</label>
+					<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_<?php echo esc_attr( $video_type ) ?>_url" value="<?php echo esc_attr( $video_url ) ?>"/>
+				</div>
+				<?php
+			endif;
+		endforeach;
+		$snapshot = $this->get_snapshot_url( $attachment_id );
+		if ( $snapshot ):
 		?>
-		<div class="misc-pub-section misc-pub-gif2html5-mp4-url">
-			<label for="gif2html5_mp4_url"><?php esc_html_e( 'Mp4 URL', 'gif2html5' ) ?>:</label>
-			<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_mp4_url" value="<?php echo esc_attr( $mp4 ) ?>"/>
-		</div>
-		<div class="misc-pub-section misc-pub-gif2html5-snapshot-url">
-			<label for="gif2html5_snapshot_url"><?php esc_html_e( 'Snapshot URL', 'gif2html5' ) ?>:</label>
-			<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_snapshot_url" value="<?php echo esc_attr( $snapshot ) ?>"/>
-		</div>
+			<div class="misc-pub-section misc-pub-gif2html5-snapshot-url">
+				<label for="gif2html5_snapshot_url"><?php esc_html_e( 'Snapshot URL', 'gif2html5' ) ?>:</label>
+				<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_snapshot_url" value="<?php echo esc_attr( $snapshot ) ?>"/>
+			</div>
+		<?php endif ?>
 		<div class="misc-pub-section misc-pub-gif2html5-force-conversion">
-			<input type="submit" name="gif2html5_force_conversion" class="button button-primary" value="<?php esc_attr_e( 'Regenerate MP4', 'gif2html5' ) ?>"/>
+			<input type="submit" name="gif2html5_force_conversion" class="button button-primary" value="<?php esc_attr_e( 'Regenerate Video', 'gif2html5' ) ?>"/>
 		</div>
 		<?php
 	}
@@ -115,7 +141,7 @@ class Gif2Html5 {
 	}
 
 	/**
-	 * Indicate whether the attachment can be converted to MP4.
+	 * Indicate whether the attachment can be converted to video.
 	 *
 	 * @param int $attachment_id the ID of the attachment.
 	 * @return bool true if the attachment is of the proper type, false otherwise.
@@ -125,11 +151,13 @@ class Gif2Html5 {
 	}
 
 	/**
-	 * Send the request to convert the image from GIF to MP4.
+	 * Send the request to convert the image from GIF to video.
 	 *
 	 * @param int $attachment_id   The unique ID of the attachment.
 	 * @return array an array with conversion results. Includes:
 	 *     mp4: URL to MP4 file.
+	 *     ogv: URL to Ogg file.
+	 *     webm: URL to WebM file.
 	 *     snapshot: URL to snapshot image.
 	 */
 	public function send_conversion_request( $attachment_id, $force_conversion = false ) {
@@ -153,7 +181,7 @@ class Gif2Html5 {
 			return;
 		}
 
-		if ( ! $force_conversion && $this->get_mp4_url( $attachment_id ) && $this->get_snapshot_url( $attachment_id ) ) {
+		if ( ! $force_conversion && $this->has_video( $attachment_id ) ) {
 			return;
 		}
 
@@ -201,7 +229,12 @@ class Gif2Html5 {
 			return;
 		}
 
-		if ( ! isset( $_POST['mp4'] ) || ! isset( $_POST['snapshot'] ) ) {
+		if (
+			! isset( $_POST['mp4'] ) ||
+			! isset( $_POST['ogv'] ) ||
+			! isset( $_POST['webm'] ) ||
+			! isset( $_POST['snapshot'] )
+		) {
 			return;
 		}
 
@@ -212,11 +245,30 @@ class Gif2Html5 {
 		$this->unset_conversion_response_pending( $attachment_id );
 
 		$mp4_url = esc_url_raw( $_POST['mp4'] );
+		$ogg_url = esc_url_raw( $_POST['ogv'] );
+		$webm_url = esc_url_raw( $_POST['webm'] );
 		$snapshot_url = esc_url_raw( $_POST['snapshot'] );
-		if ( $mp4_url && $snapshot_url ) {
+		if ( $mp4_url && $ogg_url && $webm_url && $snapshot_url ) {
 			$this->set_mp4_url( $attachment_id, $mp4_url );
+			$this->set_ogg_url( $attachment_id, $ogg_url );
+			$this->set_webm_url( $attachment_id, $webm_url );
 			$this->set_snapshot_url( $attachment_id, $snapshot_url );
 		}
+	}
+
+	/**
+	 * Indicate whether this attachment has at least one video URL.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @return bool True if the attachment has at least one video URL, False otherwise.
+	 */
+	public function has_video( $attachment_id ) {
+		foreach ( array_keys( $this->video_types ) as $video_type ) {
+			if ( $this->get_video_url( $attachment_id, $video_type ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -226,13 +278,37 @@ class Gif2Html5 {
 	 * @return string The MP4 URL or, an empty string if no MP4 URL exists.
 	 */
 	public function get_mp4_url( $attachment_id ) {
-		/**
-		 * Filter the MP4 URL.
-		 *
-		 * @param string MP4 URL
-		 * @param int Attachment ID
-		 */
-		return apply_filters( 'gif2html5_mp4_url', get_post_meta( $attachment_id, $this->mp4_url_meta_key, true ), $attachment_id );
+		return $this->get_video_url( $attachment_id, self::VIDEO_TYPE_MP4 );
+	}
+
+	/**
+	 * Get the Ogg URL for the given attachment.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @return string The Ogg URL or, an empty string if no Ogg URL exists.
+	 */
+	public function get_ogg_url( $attachment_id ) {
+		return $this->get_video_url( $attachment_id, self::VIDEO_TYPE_OGG );
+	}
+
+	/**
+	 * Get the WebM URL for the given attachment.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @return string The WebM URL or, an empty string if no WebM URL exists.
+	 */
+	public function get_webm_url( $attachment_id ) {
+		return $this->get_video_url( $attachment_id, self::VIDEO_TYPE_WEBM );
+	}
+
+	private function get_video_url( $attachment_id, $video_type ) {
+		$url = get_post_meta(
+			$attachment_id,
+			$this->get_video_meta_key( $video_type ),
+			true
+		);
+		$filter = 'gif2html5_' . $video_type . '_url';
+		return apply_filters( $filter, $url, $attachment_id );
 	}
 
 	/**
@@ -242,9 +318,40 @@ class Gif2Html5 {
 	 * @param string $mp4_url The MP4 URL.
 	 */
 	public function set_mp4_url( $attachment_id, $mp4_url ) {
-		update_post_meta( $attachment_id, $this->mp4_url_meta_key, $mp4_url );
+		$this->set_video_url( $attachment_id, $mp4_url, self::VIDEO_TYPE_MP4 );
 	}
 
+	/**
+	 * Set the Ogg URL for the given attachment.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @param string $ogg_url The Ogg URL.
+	 */
+	public function set_ogg_url( $attachment_id, $ogg_url ) {
+		$this->set_video_url( $attachment_id, $ogg_url, self::VIDEO_TYPE_OGG );
+	}
+
+	/**
+	 * Set the WebM URL for the given attachment.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 * @param string $webm_url The WebM URL.
+	 */
+	public function set_webm_url( $attachment_id, $webm_url ) {
+		$this->set_video_url( $attachment_id, $webm_url, self::VIDEO_TYPE_WEBM );
+	}
+
+	private function set_video_url( $attachment_id, $url, $video_type ) {
+		update_post_meta(
+			$attachment_id,
+			$this->get_video_meta_key( $video_type ),
+			$url
+		);
+	}
+
+	private function get_video_meta_key( $video_type ) {
+		return 'gif2html5_' . $video_type . '_url';
+	}
 
 	/**
 	 * Get the snapshot URL for the given attachment.
@@ -347,7 +454,7 @@ class Gif2Html5 {
 			if ( empty( $post_id ) ) {
 				continue;
 			}
-			if ( ! $this->get_mp4_url( $post_id ) ) {
+			if ( ! $this->has_video( $post_id ) ) {
 				continue;
 			}
 			$img_element = $matches[0][ $i ];
@@ -397,8 +504,7 @@ class Gif2Html5 {
 	 *                     not be created for the given attachment.
 	 */
 	public function get_video_element( $id, $options = array() ) {
-		$mp4_url = $this->get_mp4_url( $id );
-		if ( empty( $mp4_url ) ) {
+		if ( ! $this->has_video( $id ) ) {
 			return false;
 		}
 		$attributes = $this->get_video_element_attributes(
@@ -406,9 +512,16 @@ class Gif2Html5 {
 			isset( $options['attributes'] ) ? $options['attributes'] : array()
 		);
 		$fallback = isset( $options['fallback'] ) ? $options['fallback'] : '';
+		$sources = array();
+		foreach ( $this->video_types as $video_type => $video_type_info ) {
+			$url = $this->get_video_url( $id, $video_type );
+			if ( ! empty( $url ) ) {
+				$sources[] = '<source src="' . esc_url( $url ) . '" type="' . esc_attr( $video_type_info['mime_type'] ) . '">';
+			}
+		}
 		return '<video '
 		. trim( $this->attributes_string( $attributes ) . ' autoplay loop' )
-		. '><source src="' . esc_url( $mp4_url ) . '" type="video/mp4">' . $fallback . '</video>';
+		. '>' . join( '', $sources ) . $fallback . '</video>';
 	}
 
 	private function get_element_attributes( $element_html, $att_names ) {

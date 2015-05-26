@@ -164,9 +164,42 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertFalse( $this->request_r || $this->request_url );
 	}
 
-	function test_no_request_when_urls_exist_on_add() {
+	function test_has_video_w_no_video_is_false() {
+		$this->assertFalse( Gif2Html5()->has_video( $this->gif_id ) );
+	}
+
+	function test_has_video_w_mp4_is_true() {
+		$this->assertFalse( Gif2Html5()->has_video( $this->gif_id ) );
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
-		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
+		$this->assertTrue( Gif2Html5()->has_video( $this->gif_id ) );
+	}
+
+	function test_has_video_w_ogg_is_true() {
+		$this->assertFalse( Gif2Html5()->has_video( $this->gif_id ) );
+		Gif2Html5()->set_ogg_url( $this->gif_id, 'http://example.com/ogg.ogg' );
+		$this->assertTrue( Gif2Html5()->has_video( $this->gif_id ) );
+	}
+
+	function test_has_video_w_webm_is_true() {
+		$this->assertFalse( Gif2Html5()->has_video( $this->gif_id ) );
+		Gif2Html5()->set_webm_url( $this->gif_id, 'http://example.com/webm.webm' );
+		$this->assertTrue( Gif2Html5()->has_video( $this->gif_id ) );
+	}
+
+	function test_no_request_when_mp4_exists_on_add() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertFalse( $this->request_r || $this->request_url );
+	}
+
+	function test_no_request_when_ogg_exists_on_add() {
+		Gif2Html5()->set_ogg_url( $this->gif_id, 'http://example.com/ogg.ogg' );
+		do_action( 'add_attachment', $this->gif_id );
+		$this->assertFalse( $this->request_r || $this->request_url );
+	}
+
+	function test_no_request_when_webm_exists_on_add() {
+		Gif2Html5()->set_webm_url( $this->gif_id, 'http://example.com/webm.webm' );
 		do_action( 'add_attachment', $this->gif_id );
 		$this->assertFalse( $this->request_r || $this->request_url );
 	}
@@ -174,7 +207,6 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	function test_request_when_urls_exist_and_force_on_add() {
 		$_POST['gif2html5_force_conversion'] = true;
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
-		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
 		do_action( 'add_attachment', $this->gif_id );
 		$this->assertTrue( $this->request_r && $this->request_url );
 	}
@@ -195,7 +227,6 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 
 	function test_no_request_when_urls_exist_on_edit() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
-		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
 		do_action( 'edit_attachment', $this->gif_id );
 		$this->assertFalse( $this->request_r || $this->request_url );
 	}
@@ -203,7 +234,6 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	function test_request_when_urls_exist_and_force_on_edit() {
 		$_POST['gif2html5_force_conversion'] = true;
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
-		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
 		do_action( 'edit_attachment', $this->gif_id );
 		$this->assertTrue( $this->request_r && $this->request_url );
 	}
@@ -322,64 +352,44 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertFalse( Gif2Html5()->conversion_response_pending( $this->png_id ) );
 	}
 
-	function test_webhook_callback_sets_mp4_url() {
+	function test_webhook_callback_sets_appropriate_urls() {
 		$_GET['code'] = wp_hash( $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['ogv'] = 'http://example.com/ogg.ogg';
+		$_POST['webm'] = 'http://example.com/webm.webm';
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
 
 		do_action( 'admin_post_gif2html5_convert_cb' );
 
 		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
 		$this->assertEquals( $mp4, 'http://example.com/mp4.mp4' );
-	}
-
-	function test_webhook_callback_sets_mp4_url_with_filter_to_manipulate_url() {
-		$_GET['code'] = wp_hash( $this->gif_id );
-		$_GET['action'] = 'gif2html5_convert_cb';
-		$_POST['attachment_id'] = $this->gif_id;
-		$_POST['mp4'] = 'http://s3.amazon.com/bucket/folder/mp4.mp4';
-		$_POST['snapshot'] = 'http://example.com/snapshot.png';
-
-		do_action( 'admin_post_gif2html5_convert_cb' );
-		add_filter('gif2html5_mp4_url', function($url) {
-			return 'http://assets.cloudfront.net/folder/mp4.mp4';
-		}, 10 ,1);
-
-		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
-		$this->assertEquals( $mp4, 'http://assets.cloudfront.net/folder/mp4.mp4' );
-	}
-
-	function test_webhook_callback_sets_snapshot_url() {
-		$_GET['code'] = wp_hash( $this->gif_id );
-		$_GET['action'] = 'gif2html5_convert_cb';
-		$_POST['attachment_id'] = $this->gif_id;
-		$_POST['mp4'] = 'http://example.com/mp4.mp4';
-		$_POST['snapshot'] = 'http://example.com/snapshot.png';
-
-		do_action( 'admin_post_gif2html5_convert_cb' );
-
+		$ogg = Gif2Html5()->get_ogg_url( $this->gif_id );
+		$this->assertEquals( $ogg, 'http://example.com/ogg.ogg' );
+		$webm = Gif2Html5()->get_webm_url( $this->gif_id );
+		$this->assertEquals( $webm , 'http://example.com/webm.webm' );
 		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
 		$this->assertEquals( $snapshot, 'http://example.com/snapshot.png' );
 	}
 
-	function test_webhook_callback_sets_snapshot_url_with_filter_to_manipulate_url() {
-		$_GET['code'] = wp_hash( $this->gif_id );
-		$_GET['action'] = 'gif2html5_convert_cb';
-		$_POST['attachment_id'] = $this->gif_id;
-		$_POST['mp4'] = 'http://example.com/mp4.mp4';
-		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+	function test_mp4_url_filter() {
+		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://s3.amazon.com/bucket/folder/mp4.mp4' );
+		add_filter('gif2html5_mp4_url', function($url) {
+			return 'http://assets.cloudfront.net/folder/mp4.mp4';
+		}, 10 ,1);
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEquals( $mp4, 'http://assets.cloudfront.net/folder/mp4.mp4' );
+	}
 
-		do_action( 'admin_post_gif2html5_convert_cb' );
+	function test_snapshot_url_filter() {
+		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
 		add_filter('gif2html5_snapshot_url', function($url) {
 			return 'http://assets.cloudfront.net/folder/snapshot.png';
 		}, 10 ,1);
-
 		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
 		$this->assertEquals( $snapshot, 'http://assets.cloudfront.net/folder/snapshot.png' );
 	}
-
 
 	function test_webhook_callback_unsets_pending_conversion_flag() {
 
@@ -388,6 +398,8 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['ogv'] = 'http://example.com/ogg.ogg';
+		$_POST['webm'] = 'http://example.com/webm.webm';
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
 
 		do_action( 'admin_post_gif2html5_convert_cb' );
@@ -413,6 +425,8 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['ogv'] = 'http://example.com/ogg.ogg';
+		$_POST['webm'] = 'http://example.com/webm.webm';
 
 		do_action( 'admin_post_gif2html5_convert_cb' );
 
@@ -425,11 +439,41 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+		$_POST['ogv'] = 'http://example.com/ogg.ogg';
+		$_POST['webm'] = 'http://example.com/webm.webm';
 
 		do_action( 'admin_post_gif2html5_convert_cb' );
 
 		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
 		$this->assertEmpty( $snapshot );
+	}
+
+	function test_webhook_callback_fails_on_no_ogg() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['webm'] = 'http://example.com/webm.webm';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEmpty( $mp4 );
+	}
+
+	function test_webhook_callback_fails_on_no_webm() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+		$_POST['ogv'] = 'http://example.com/ogg.ogg';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEmpty( $mp4 );
 	}
 
 	function test_webhook_checks_mime_type() {
@@ -438,6 +482,8 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$_POST['attachment_id'] = $this->png_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+		$_POST['ogv'] = 'http://example.com/ogg.ogg';
+		$_POST['webm'] = 'http://example.com/webm.webm';
 
 		do_action( 'admin_post_gif2html5_convert_cb' );
 
@@ -451,6 +497,8 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+		$_POST['ogv'] = 'http://example.com/ogg.ogg';
+		$_POST['webm'] = 'http://example.com/webm.webm';
 
 		do_action( 'admin_post_nopriv_gif2html5_convert_cb' );
 
@@ -469,13 +517,11 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 
 	function test_action_attachment_submitbox_contains_mp4_label() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
-		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/test.png' );
-		$this->assertContains( 'Mp4 URL:', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+		$this->assertContains( 'MP4 URL:', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 	function test_action_attachment_submitbox_contains_mp4_url() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
-		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/test.png' );
 		$this->assertContains( 'http://example.com/test.mp4', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
@@ -494,21 +540,21 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	function test_action_attachment_submitbox_contains_force_conversion_button() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/test.mp4' );
 		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
-		$this->assertContains( 'Regenerate MP4', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+		$this->assertContains( 'Regenerate Video', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 	function test_action_attachment_submitbox_contains_pending_message() {
 		Gif2Html5()->set_conversion_response_pending( $this->gif_id );
-		$this->assertContains( 'MP4 conversion pending...', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+		$this->assertContains( 'Video conversion pending...', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 	function test_action_attachment_submitbox_contains_stop_waiting_button() {
 		Gif2Html5()->set_conversion_response_pending( $this->gif_id );
-		$this->assertContains( 'Stop waiting for MP4 conversion', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+		$this->assertContains( 'Stop waiting for video conversion', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
-	function test_action_attachment_submitbox_contains_generate_mp4_button() {
-		$this->assertContains( 'Generate MP4', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
+	function test_action_attachment_submitbox_contains_generate_video_button() {
+		$this->assertContains( 'Generate Video', $this->get_submitbox_misc_actions_html( $this->gif_id ) );
 	}
 
 	function test_api_key_empty_without_option_set() {
@@ -526,6 +572,8 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 
 	function get_img_to_video_html() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://example.com/mp4.mp4' );
+		Gif2Html5()->set_ogg_url( $this->gif_id, 'http://example.com/ogg.ogg' );
+		Gif2Html5()->set_webm_url( $this->gif_id, 'http://example.com/webm.webm' );
 		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
 		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
 		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
@@ -554,9 +602,11 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertContains( '<video', $html );
 	}
 
-	function test_img_to_video_contains_video_url() {
+	function test_img_to_video_contains_video_urls() {
 		$html = $this->get_img_to_video_html();
 		$this->assertRegExp( '|<source [^>]*src="http://example.com/mp4.mp4"|', $html );
+		$this->assertRegExp( '|<source [^>]*src="http://example.com/ogg.ogg"|', $html );
+		$this->assertRegExp( '|<source [^>]*src="http://example.com/webm.webm"|', $html );
 	}
 
 	function test_img_to_video_contains_width() {
