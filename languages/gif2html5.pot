@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gif2Html5 v0.1-alpha\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/gif2html5\n"
-"POT-Creation-Date: 2015-04-24 13:19:37+00:00\n"
+"POT-Creation-Date: 2015-05-26 17:08:21+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,28 +24,40 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: inc/class-gif2html5.php:39
-msgid "MP4 conversion pending..."
+#: inc/class-gif2html5.php:33
+msgid "MP4"
 msgstr ""
 
-#: inc/class-gif2html5.php:40
-msgid "Stop waiting for MP4 conversion"
+#: inc/class-gif2html5.php:37
+msgid "Ogg"
 msgstr ""
 
-#: inc/class-gif2html5.php:51
-msgid "Generate MP4"
+#: inc/class-gif2html5.php:41
+msgid "WebM"
 msgstr ""
 
-#: inc/class-gif2html5.php:58
-msgid "Mp4 URL"
+#: inc/class-gif2html5.php:72
+msgid "Video conversion pending..."
 msgstr ""
 
-#: inc/class-gif2html5.php:62
+#: inc/class-gif2html5.php:73
+msgid "Stop waiting for video conversion"
+msgstr ""
+
+#: inc/class-gif2html5.php:81
+msgid "Generate Video"
+msgstr ""
+
+#: inc/class-gif2html5.php:91
+msgid "%s URL"
+msgstr ""
+
+#: inc/class-gif2html5.php:101
 msgid "Snapshot URL"
 msgstr ""
 
-#: inc/class-gif2html5.php:66
-msgid "Regenerate MP4"
+#: inc/class-gif2html5.php:106
+msgid "Regenerate Video"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

@@ -18,20 +18,7 @@ class Gif2Html5 {
 	const VIDEO_TYPE_OGG = 'ogg';
 	const VIDEO_TYPE_WEBM = 'webm';
 
-	private $video_types = array(
-		self::VIDEO_TYPE_MP4 => array(
-			'label' => 'MP4',
-			'mime_type' => 'video/mp4',
-		),
-		self::VIDEO_TYPE_OGG => array(
-			'label' => 'Ogg',
-			'mime_type' => 'video/ogg',
-		),
-		self::VIDEO_TYPE_WEBM => array(
-			'label' => 'WebM',
-			'mime_type' => 'video/webm',
-		),
-	);
+	private $video_types;
 
 	/**
 	 * Returns an instance of this class.
@@ -41,6 +28,20 @@ class Gif2Html5 {
 	public static function get_instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self;
+			self::$instance->video_types = array(
+				self::VIDEO_TYPE_MP4 => array(
+					'label' => __( 'MP4', 'gif2html5' ),
+					'mime_type' => 'video/mp4',
+				),
+				self::VIDEO_TYPE_OGG => array(
+					'label' => __( 'Ogg', 'gif2html5' ),
+					'mime_type' => 'video/ogg',
+				),
+				self::VIDEO_TYPE_WEBM => array(
+					'label' => __( 'WebM', 'gif2html5' ),
+					'mime_type' => 'video/webm',
+				),
+			);
 			self::$instance->setup_actions();
 		}
 		return self::$instance;
@@ -87,7 +88,7 @@ class Gif2Html5 {
 			if ( ! empty( $video_url ) ) :
 				?>
 				<div class="misc-pub-section misc-pub-gif2html5-<?php echo esc_attr( $video_type ) ?>-url">
-					<label for="gif2html5_<?php echo esc_attr( $video_type ) ?>_url"><?php esc_html_e( $video_type_info['label'] . ' URL', 'gif2html5' ) ?>:</label>
+					<label for="gif2html5_<?php echo esc_attr( $video_type ) ?>_url"><?php echo esc_html( sprintf( __( '%s URL', 'gif2html5' ), $video_type_info['label'] ) ) ?>:</label>
 					<input type="text" class="widefat urlfield" readonly="readonly" id="gif2html5_<?php echo esc_attr( $video_type ) ?>_url" value="<?php echo esc_attr( $video_url ) ?>"/>
 				</div>
 				<?php
