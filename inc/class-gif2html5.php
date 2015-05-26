@@ -29,13 +29,13 @@ class Gif2Html5 {
 		if ( null === self::$instance ) {
 			self::$instance = new self;
 			self::$instance->video_types = array(
-				self::VIDEO_TYPE_OGG => array(
-					'label' => __( 'Ogg', 'gif2html5' ),
-					'mime_type' => 'video/ogg',
-				),
 				self::VIDEO_TYPE_MP4 => array(
 					'label' => __( 'MP4', 'gif2html5' ),
 					'mime_type' => 'video/mp4',
+				),
+				self::VIDEO_TYPE_OGG => array(
+					'label' => __( 'Ogg', 'gif2html5' ),
+					'mime_type' => 'video/ogg',
 				),
 				self::VIDEO_TYPE_WEBM => array(
 					'label' => __( 'WebM', 'gif2html5' ),
