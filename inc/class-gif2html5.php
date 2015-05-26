@@ -1,6 +1,6 @@
 <?php
 /**
- * Convert GIFs to videos 
+ * Convert GIFs to videos
  *
  * Converts GIFS to videos and replaces GIF HTML img elements with video elements.
  */
@@ -74,7 +74,6 @@ class Gif2Html5 {
 			return;
 		}
 
-
 		if ( ! $this->has_video( $attachment_id ) ) {
 			?>
 			<div class="misc-pub-section misc-pub-gif2html5-generate-video">
@@ -83,9 +82,9 @@ class Gif2Html5 {
 			return;
 		}
 
-		foreach ( $this->video_types as $video_type => $video_type_info ):
+		foreach ( $this->video_types as $video_type => $video_type_info ) :
 			$video_url = $this->get_video_url( $attachment_id, $video_type );
-			if ( ! empty( $video_url ) ):
+			if ( ! empty( $video_url ) ) :
 				?>
 				<div class="misc-pub-section misc-pub-gif2html5-<?php echo esc_attr( $video_type ) ?>-url">
 					<label for="gif2html5_<?php echo esc_attr( $video_type ) ?>_url"><?php esc_html_e( $video_type_info['label'] . ' URL', 'gif2html5' ) ?>:</label>
@@ -95,7 +94,7 @@ class Gif2Html5 {
 			endif;
 		endforeach;
 		$snapshot = $this->get_snapshot_url( $attachment_id );
-		if ( $snapshot ):
+		if ( $snapshot ) :
 		?>
 			<div class="misc-pub-section misc-pub-gif2html5-snapshot-url">
 				<label for="gif2html5_snapshot_url"><?php esc_html_e( 'Snapshot URL', 'gif2html5' ) ?>:</label>
