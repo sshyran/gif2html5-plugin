@@ -420,7 +420,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertEmpty( $mp4 );
 	}
 
-	function test_webhook_callback_fails_on_no_snapshot() {
+	function test_webhook_callback_succeeds_on_no_snapshot() {
 		$_GET['code'] = wp_hash( $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
@@ -431,49 +431,86 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		do_action( 'admin_post_gif2html5_convert_cb' );
 
 		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
-		$this->assertEmpty( $mp4 );
+		$this->assertEquals( $mp4, 'http://example.com/mp4.mp4' );
+		$ogg = Gif2Html5()->get_ogg_url( $this->gif_id );
+		$this->assertEquals( $ogg, 'http://example.com/ogg.ogg' );
+		$webm = Gif2Html5()->get_webm_url( $this->gif_id );
+		$this->assertEquals( $webm , 'http://example.com/webm.webm' );
+		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
+		$this->assertEmpty( $snapshot );
 	}
 
-	function test_webhook_callback_fails_on_no_mp4() {
+	function test_webhook_callback_succeeds_on_no_mp4() {
 		$_GET['code'] = wp_hash( $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
 		$_POST['ogv'] = 'http://example.com/ogg.ogg';
 		$_POST['webm'] = 'http://example.com/webm.webm';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEmpty( $mp4 );
+		$ogg = Gif2Html5()->get_ogg_url( $this->gif_id );
+		$this->assertEquals( $ogg, 'http://example.com/ogg.ogg' );
+		$webm = Gif2Html5()->get_webm_url( $this->gif_id );
+		$this->assertEquals( $webm , 'http://example.com/webm.webm' );
+		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
+		$this->assertEquals( $snapshot, 'http://example.com/snapshot.png' );
+	}
+
+	function test_webhook_callback_succeeds_on_no_ogg() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['webm'] = 'http://example.com/webm.webm';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEquals( $mp4, 'http://example.com/mp4.mp4' );
+		$ogg = Gif2Html5()->get_ogg_url( $this->gif_id );
+		$this->assertEmpty( $ogg );
+		$webm = Gif2Html5()->get_webm_url( $this->gif_id );
+		$this->assertEquals( $webm , 'http://example.com/webm.webm' );
+		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
+		$this->assertEquals( $snapshot, 'http://example.com/snapshot.png' );
+
+	}
+
+	function test_webhook_callback_succeeds_on_no_webm() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['mp4'] = 'http://example.com/mp4.mp4';
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
+		$_POST['ogv'] = 'http://example.com/ogg.ogg';
+
+		do_action( 'admin_post_gif2html5_convert_cb' );
+
+		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
+		$this->assertEquals( $mp4, 'http://example.com/mp4.mp4' );
+		$ogg = Gif2Html5()->get_ogg_url( $this->gif_id );
+		$this->assertEquals( $ogg, 'http://example.com/ogg.ogg' );
+		$webm = Gif2Html5()->get_webm_url( $this->gif_id );
+		$this->assertEmpty( $webm );
+		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
+		$this->assertEquals( $snapshot, 'http://example.com/snapshot.png' );
+	}
+
+	function test_webhook_callback_fails_on_no_video() {
+		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['action'] = 'gif2html5_convert_cb';
+		$_POST['attachment_id'] = $this->gif_id;
+		$_POST['snapshot'] = 'http://example.com/snapshot.png';
 
 		do_action( 'admin_post_gif2html5_convert_cb' );
 
 		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
 		$this->assertEmpty( $snapshot );
-	}
-
-	function test_webhook_callback_fails_on_no_ogg() {
-		$_GET['code'] = wp_hash( $this->gif_id );
-		$_GET['action'] = 'gif2html5_convert_cb';
-		$_POST['attachment_id'] = $this->gif_id;
-		$_POST['mp4'] = 'http://example.com/mp4.mp4';
-		$_POST['webm'] = 'http://example.com/webm.webm';
-		$_POST['snapshot'] = 'http://example.com/snapshot.png';
-
-		do_action( 'admin_post_gif2html5_convert_cb' );
-
-		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
-		$this->assertEmpty( $mp4 );
-	}
-
-	function test_webhook_callback_fails_on_no_webm() {
-		$_GET['code'] = wp_hash( $this->gif_id );
-		$_GET['action'] = 'gif2html5_convert_cb';
-		$_POST['attachment_id'] = $this->gif_id;
-		$_POST['mp4'] = 'http://example.com/mp4.mp4';
-		$_POST['snapshot'] = 'http://example.com/snapshot.png';
-		$_POST['ogv'] = 'http://example.com/ogg.ogg';
-
-		do_action( 'admin_post_gif2html5_convert_cb' );
-
-		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
-		$this->assertEmpty( $mp4 );
 	}
 
 	function test_webhook_checks_mime_type() {

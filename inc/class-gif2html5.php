@@ -15,7 +15,7 @@ class Gif2Html5 {
 	private $snapshot_url_meta_key = 'gif2html5_snapshot_url';
 
 	const VIDEO_TYPE_MP4 = 'mp4';
-	const VIDEO_TYPE_OGG = 'ogg';
+	const VIDEO_TYPE_OGG = 'ogv';
 	const VIDEO_TYPE_WEBM = 'webm';
 
 	private $video_types;
@@ -224,35 +224,46 @@ class Gif2Html5 {
 			return;
 		}
 
+		if ( ! $this->mime_type_check( $attachment_id ) ) {
+			return;
+		}
+
 		$code = sanitize_text_field( $_GET['code'] );
 		if ( ! $code || wp_hash( $attachment_id ) !== $code ) {
 			return;
 		}
 
-		if (
-			! isset( $_POST['mp4'] ) ||
-			! isset( $_POST['ogv'] ) ||
-			! isset( $_POST['webm'] ) ||
-			! isset( $_POST['snapshot'] )
-		) {
-			return;
+		$response_has_video = false;
+		foreach ( array_keys( $this->video_types ) as $video_type ) {
+			if ( isset( $_POST[ $video_type ] ) ) {
+				$url = esc_url_raw( $_POST[ $video_type ] );
+				if ( $url ) {
+					$response_has_video = true;
+					break;
+				}
+			}
 		}
 
-		if ( ! $this->mime_type_check( $attachment_id ) ) {
+		if ( ! $response_has_video ) {
 			return;
 		}
 
 		$this->unset_conversion_response_pending( $attachment_id );
 
-		$mp4_url = esc_url_raw( $_POST['mp4'] );
-		$ogg_url = esc_url_raw( $_POST['ogv'] );
-		$webm_url = esc_url_raw( $_POST['webm'] );
-		$snapshot_url = esc_url_raw( $_POST['snapshot'] );
-		if ( $mp4_url && $ogg_url && $webm_url && $snapshot_url ) {
-			$this->set_mp4_url( $attachment_id, $mp4_url );
-			$this->set_ogg_url( $attachment_id, $ogg_url );
-			$this->set_webm_url( $attachment_id, $webm_url );
-			$this->set_snapshot_url( $attachment_id, $snapshot_url );
+		foreach ( array_keys( $this->video_types ) as $video_type ) {
+			if ( isset( $_POST[ $video_type ] ) ) {
+				$url = esc_url_raw( $_POST[ $video_type ] );
+				if ( $url ) {
+					$this->set_video_url( $attachment_id, $url, $video_type );
+				}
+			}
+		}
+
+		if ( isset( $_POST['snapshot'] ) ) {
+			$snapshot_url = esc_url_raw( $_POST['snapshot'] );
+			if ( $snapshot_url ) {
+				$this->set_snapshot_url( $attachment_id, $snapshot_url );
+			}
 		}
 	}
 
