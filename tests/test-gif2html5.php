@@ -719,7 +719,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 
 	function test_img_to_video_contains_original_img_tag() {
 		$html = $this->get_img_to_video_html();
-		$this->assertRegexp( '/<img [^>]*class="[^"]*wp-image-' . $this->gif_id . '[ "]/', $html );
+		$this->assertRegexp( '/<object [^>]*class="[^"]*wp-image-' . $this->gif_id . '[ "]/', $html );
 	}
 
 }
