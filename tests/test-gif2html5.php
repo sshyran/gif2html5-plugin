@@ -614,7 +614,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
 		$html = '<p>This is a test <img class="alignnone size-full wp-image-' . $this->gif_id . '"'
 		. ' src="' . esc_attr( wp_get_attachment_url( $this->gif_id ) ) . '"'
-		. ' alt="Test GIF" width="100" height="200" /> and done.</p>';
+		. ' alt="Test GIF" width="100" height="200" srcset="http://example.com/pic.gif 320w, http://example.com/pic.gif 480w" /> and done.</p>';
 		$new_html = Gif2Html5()->img_to_video( $html );
 		return $new_html;
 	}
@@ -720,6 +720,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	function test_img_to_video_contains_original_img_tag() {
 		$html = $this->get_img_to_video_html();
 		$this->assertRegexp( '/<object [^>]*class="[^"]*wp-image-' . $this->gif_id . '[ "]/', $html );
+		$this->assertNotContains( 'srcset', $html );
 	}
 
 }
