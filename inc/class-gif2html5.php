@@ -494,12 +494,12 @@ class Gif2Html5 {
 			$img_element,
 			array( 'width', 'height', 'class' )
 		);
-
+		
 		/**
 		 * This is to stop browser from downloading the gif files
 		 * */
 		$object_element = preg_replace( '/img/', 'object', $img_element, 1 );
-		
+		$object_element = preg_replace( '/\/>/', '></object>', $object_element, 1 );
 		return $this->get_video_element(
 			$id,
 			array( 'attributes' => $attributes, 'fallback' => $object_element )
