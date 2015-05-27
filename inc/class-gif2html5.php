@@ -494,7 +494,6 @@ class Gif2Html5 {
 			$img_element,
 			array( 'width', 'height', 'class' )
 		);
-		
 		/**
 		 * This is to stop browser from downloading the gif files
 		 * */
