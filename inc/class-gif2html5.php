@@ -196,7 +196,7 @@ class Gif2Html5 {
 			array(
 				'action' => $this->convert_action,
 				'attachment_id' => $attachment_id,
-				'code' => wp_hash( $attachment_id ),
+				'code' => wp_hash( 'gif2html5-' . $attachment_id ),
 				),
 			admin_url( 'admin-post.php' )
 		);
@@ -236,7 +236,7 @@ class Gif2Html5 {
 		}
 
 		$code = sanitize_text_field( $_GET['code'] );
-		if ( ! $code || wp_hash( $attachment_id ) !== $code ) {
+		if ( ! $code || wp_hash( 'gif2html5-' . $attachment_id ) !== $code ) {
 			return;
 		}
 
