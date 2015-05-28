@@ -1,0 +1,22 @@
+@media only screen and (max-width: 760px) {
+
+	.gif2html5-video-container:before {
+		content: ' ';
+		background-image: url('http://www.clipartbest.com/cliparts/bTy/EkL/bTyEkLGrc.png');
+		position: absolute;
+		background-size: 100%;
+		left: 50%;
+		top: 50%;
+		z-index: 999;
+		display: block;
+		width: 32px;
+		height: 32px;
+		margin-top: -16px;
+		margin-left: -16px;
+	}
+
+	.gif2html5-video-container {
+		position: relative;
+	}
+
+}

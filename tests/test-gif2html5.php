@@ -619,6 +619,11 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		return $new_html;
 	}
 
+	function test_img_to_video_persists_div_container() {
+		$html = $this->get_img_to_video_html();
+		$this->assertRegExp( '/<div class="gif2html5-video-container"><video [^>]*class="[^"]*alignnone[" ]/', $html );
+	}
+
 	function test_img_to_video_persists_alignone_class() {
 		$html = $this->get_img_to_video_html();
 		$this->assertRegExp( '/<video [^>]*class="[^"]*alignnone[" ]/', $html );

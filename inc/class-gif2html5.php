@@ -13,6 +13,7 @@ class Gif2Html5 {
 	private $convert_action = 'gif2html5_convert_cb';
 	private $conversion_response_pending_meta_key = 'gif2html5_conversion_response_pending';
 	private $snapshot_url_meta_key = 'gif2html5_snapshot_url';
+	private $gif2html5_class = 'gif2html5-video';
 
 	const VIDEO_TYPE_MP4 = 'mp4';
 	const VIDEO_TYPE_OGG = 'ogv';
@@ -434,7 +435,7 @@ class Gif2Html5 {
 	public function filter_the_content_img_to_video( $html ) {
 		wp_enqueue_script( 'gif2html5-video-handler' );
 		wp_enqueue_script( 'gif2html5' );
-
+		wp_enqueue_style( 'gif2html5', plugins_url( 'css/gif2html5.css', dirname( __FILE__ ) ), array(), '0.1-alpha' );
 		return $this->img_to_video( $html );
 	}
 
@@ -563,9 +564,12 @@ class Gif2Html5 {
 				$sources[] = '<source src="' . esc_url( $url ) . '" type="' . esc_attr( $video_type_info['mime_type'] ) . '">';
 			}
 		}
-		return '<video '
+		
+		$div_container = '<div class="' . $this->gif2html5_class . '-container">';
+
+		return $div_container . '<video '
 		. trim( $this->attributes_string( $attributes ) . ' autoplay loop' )
-		. '>' . join( '', $sources ) . $fallback . '</video>';
+		. '>' . join( '', $sources ) . $fallback . '</video></div>';
 	}
 
 	private function get_element_attributes( $element_html, $att_names ) {
@@ -607,7 +611,7 @@ class Gif2Html5 {
 		}
 		$attributes['class'] = trim(
 			( isset( $attributes['class'] ) ? $attributes['class'] : '' )
-			. ' gif2html5-video gif2html5-video-' . $id
+			. ' ' . $this->gif2html5_class . ' ' . $this->gif2html5_class .'-' . $id
 		);
 		return $attributes;
 	}
