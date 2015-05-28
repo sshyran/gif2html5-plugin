@@ -43,8 +43,15 @@ class Gif2Html5 {
 				),
 			);
 			self::$instance->setup_actions();
+			self::$instance->setup_assets();
 		}
 		return self::$instance;
+	}
+
+	private function setup_assets() {
+		wp_register_script( 'gif2html5-video-handler', plugins_url( '../js/src/video-handler.js', __FILE__ ) );
+		wp_register_script( 'gif2html5', plugins_url( '../js/src/gif2html5.js', __FILE__ ) );
+
 	}
 
 	private function setup_actions() {
@@ -425,6 +432,9 @@ class Gif2Html5 {
 	 * @return string the HTML with img elements replaced by corresponding video elements.
 	 */
 	public function filter_the_content_img_to_video( $html ) {
+		wp_enqueue_script( 'gif2html5-video-handler' );
+		wp_enqueue_script( 'gif2html5' );
+
 		return $this->img_to_video( $html );
 	}
 
@@ -492,13 +502,36 @@ class Gif2Html5 {
 	public function img_to_video_element( $id, $img_element ) {
 		$attributes = $this->get_element_attributes(
 			$img_element,
-			array( 'width', 'height', 'class' )
+			array( 'width', 'height', 'class', 'src', 'alt', 'srcset' )
 		);
 
 		return $this->get_video_element(
 			$id,
-			array( 'attributes' => $attributes, 'fallback' => $img_element )
+			array( 'attributes' => $this->array_slice_assoc( $attributes, array( 'width', 'height', 'class' ) ), 'fallback' => $this->get_fallback_object( $attributes ) )
 		);
+	}
+
+
+	/**
+	 * Returns the fallback HTML element
+	 *
+	 * @param array $attributes An array of attributes for the fallback object
+	 *
+	 * */
+	private function get_fallback_object( $attributes ) {
+		$fallback_attributes = $this->array_slice_assoc( $attributes, array( 'class', 'src', 'alt', 'srcset' ) );
+		$fallback_attributes['data-gif'] = $fallback_attributes['src'];
+		unset( $fallback_attributes['src'] );
+		return '<object '
+		. trim( $this->attributes_string( $fallback_attributes ) )
+		. '></object>';
+	}
+
+	/**
+	 * Returns sliced array by keys
+	 * */
+	private function array_slice_assoc( $array, $keys ) {
+		return array_intersect_key( $array, array_flip( $keys ) );
 	}
 
 	/**
