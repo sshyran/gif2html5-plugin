@@ -43,8 +43,14 @@ class Gif2Html5 {
 				),
 			);
 			self::$instance->setup_actions();
+			self::$instance->setup_assets();
 		}
 		return self::$instance;
+	}
+
+	private function setup_assets() {
+		wp_enqueue_script( 'gif2html5-video-handler', plugins_url( '../js/src/video-handler.js', __FILE__ ), array(), false, true );
+		wp_enqueue_script( 'gif2html5', plugins_url( '../js/src/gif2html5.js', __FILE__ ), array( 'gif2html5-video-handler' ), false, true );
 	}
 
 	private function setup_actions() {
@@ -499,7 +505,7 @@ class Gif2Html5 {
 		 * */
 		$object_element = preg_replace( '/img/', 'object', $img_element, 1 );
 		$object_element = preg_replace( '/\/>/', '></object>', $object_element, 1 );
-		$object_element = preg_replace( '/srcset=\"[^"]*\"/', '', $object_element, 1 );
+		$object_element = preg_replace( '/src/', 'data', $object_element, 1 );
 		return $this->get_video_element(
 			$id,
 			array( 'attributes' => $attributes, 'fallback' => $object_element )
