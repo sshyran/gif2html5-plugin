@@ -498,18 +498,38 @@ class Gif2Html5 {
 	public function img_to_video_element( $id, $img_element ) {
 		$attributes = $this->get_element_attributes(
 			$img_element,
-			array( 'width', 'height', 'class' )
+			array( 'width', 'height', 'class', 'src', 'alt', 'srcset' )
 		);
-		/**
-		 * This is to stop browser from downloading the gif files
-		 * */
-		$object_element = preg_replace( '/img/', 'object', $img_element, 1 );
-		$object_element = preg_replace( '/\/>/', '></object>', $object_element, 1 );
-		$object_element = preg_replace( '/src/', 'data-gif', $object_element, 1 );
+
 		return $this->get_video_element(
 			$id,
-			array( 'attributes' => $attributes, 'fallback' => $object_element )
+			array( 'attributes' => $this->array_slice_assoc( $attributes, array( 'width', 'height', 'class' ) ), 'fallback' => $this->get_fallback_object( $attributes ) )
 		);
+	}
+
+
+	/**
+	 * Returns the fallback HTML element
+	 *
+	 * @param array $attributes An array of attributes for the fallback object
+	 *
+	 * */
+	private function get_fallback_object( $attributes ) {
+		$fallback_attributes = $this->array_slice_assoc( $attributes, array( 'class', 'src', 'alt', 'srcset' ) );
+		$fallback_attributes[ 'data-gif' ] = $fallback_attributes[ 'src' ];
+		unset( $fallback_attributes[ 'src' ] );
+		
+		return '<object '
+		. trim( $this->attributes_string( $fallback_attributes ) )
+		. '></object>';
+	}
+
+	/**
+	 * Returns sliced array by keys
+	 * 
+	 * */
+	private function array_slice_assoc( $array, $keys ) {
+		return array_intersect_key( $array, array_flip( $keys ) );
 	}
 
 	/**
