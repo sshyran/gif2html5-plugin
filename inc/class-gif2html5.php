@@ -520,9 +520,8 @@ class Gif2Html5 {
 	 * */
 	private function get_fallback_object( $attributes ) {
 		$fallback_attributes = $this->array_slice_assoc( $attributes, array( 'class', 'src', 'alt', 'srcset' ) );
-		$fallback_attributes[ 'data-gif' ] = $fallback_attributes[ 'src' ];
-		unset( $fallback_attributes[ 'src' ] );
-		
+		$fallback_attributes['data-gif'] = $fallback_attributes['src'];
+		unset( $fallback_attributes['src'] );
 		return '<object '
 		. trim( $this->attributes_string( $fallback_attributes ) )
 		. '></object>';
@@ -530,7 +529,6 @@ class Gif2Html5 {
 
 	/**
 	 * Returns sliced array by keys
-	 * 
 	 * */
 	private function array_slice_assoc( $array, $keys ) {
 		return array_intersect_key( $array, array_flip( $keys ) );
