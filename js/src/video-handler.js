@@ -18,6 +18,11 @@ var VideoHandler = (function($) {
 					});
 
 				});
+			},
+			handleMobile : function() {
+				videos.on('click', function() {
+					this.play();
+				});
 			}
 		}
 	};
