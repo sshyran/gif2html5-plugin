@@ -21,6 +21,8 @@
 
 require_once dirname( __FILE__ ) . '/inc/class-gif2html5.php';
 
+define( 'GIF2HTML5_PLUGIN_VERSION', '0.1-alpha' );
+
 // @codingStandardsIgnoreStart
 function Gif2Html5() {
 	return Gif2Html5::get_instance();
