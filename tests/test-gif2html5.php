@@ -721,7 +721,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$html = $this->get_img_to_video_html();
 		$this->assertRegexp( '/<object [^>]*class="[^"]*wp-image-' . $this->gif_id . '[ "]/', $html );
 		$this->assertContains( 'srcset', $html );
-		$this->assertContains( 'data', $html );
+		$this->assertContains( 'data-gif', $html );
 	}
 
 }
