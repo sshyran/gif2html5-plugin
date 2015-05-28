@@ -10,7 +10,7 @@ var VideoHandler = (function($) {
 					var gif = $('<img></img>');
 					gif.attr('alt', object.attr('alt'));
 					gif.attr('src', object.attr('data'));
-						
+					gif.attr('srcset', object.attr('srcset'));	
 					gif.html(video.innerHTML);
 
 					video.replaceWith(gif);
