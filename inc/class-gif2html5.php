@@ -564,7 +564,7 @@ class Gif2Html5 {
 				$sources[] = '<source src="' . esc_url( $url ) . '" type="' . esc_attr( $video_type_info['mime_type'] ) . '">';
 			}
 		}
-		$div_container = '<div class="' . $this->gif2html5_class . '-container">';
+		$div_container = '<div class="' . esc_attr( $this->gif2html5_class ) . '-container">';
 
 		return $div_container . '<video '
 		. trim( $this->attributes_string( $attributes ) . ' autoplay loop' )
