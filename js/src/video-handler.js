@@ -25,7 +25,10 @@ var VideoHandler = (function($) {
 				});
 
 				$('.gif2html5-video-container').on('click', function() {
-					$(this).addClass('played');
+					var container = $(this);
+					container.addClass('played');
+					container.find('video').trigger('click');
+
 				});
 			}
 		}
