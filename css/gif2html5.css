@@ -2,7 +2,7 @@
 
 	.gif2html5-video-container:before {
 		content: ' ';
-		background-image: url('http://www.clipartbest.com/cliparts/bTy/EkL/bTyEkLGrc.png');
+		background-image: url('../images/play.png');
 		position: absolute;
 		background-size: 100%;
 		left: 50%;
@@ -13,6 +13,8 @@
 		height: 32px;
 		margin-top: -16px;
 		margin-left: -16px;
+		background-color: rgba(0,0,0,0.5);
+		border-radius: 32px;
 	}
 
 	.gif2html5-video-container {
