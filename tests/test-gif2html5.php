@@ -150,7 +150,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$webhook = $data['webhook'];
 		$params = array();
 		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
-		$this->assertEquals( wp_hash( $this->gif_id ), $params['code'] );
+		$this->assertEquals( wp_hash( 'gif2html5-' . $this->gif_id ), $params['code'] );
 	}
 
 	function test_conversion_response_pending_set_on_gif_add() {
@@ -314,7 +314,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$webhook = $data['webhook'];
 		$params = array();
 		parse_str( parse_url( $webhook, PHP_URL_QUERY ), $params );
-		$this->assertEquals( wp_hash( $this->gif_id ), $params['code'] );
+		$this->assertEquals( wp_hash( 'gif2html5-' . $this->gif_id ), $params['code'] );
 	}
 
 	function test_conversion_response_pending_set_on_gif_edit() {
@@ -353,7 +353,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_callback_sets_appropriate_urls() {
-		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
@@ -394,7 +394,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	function test_webhook_callback_unsets_pending_conversion_flag() {
 
 		Gif2Html5()->set_conversion_response_pending( $this->gif_id );
-		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
@@ -408,7 +408,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_callback_fails_on_bad_code() {
-		$_GET['code'] = wp_hash( $this->gif_id ) . 'x';
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id ) . 'x';
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
@@ -421,7 +421,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_callback_succeeds_on_no_snapshot() {
-		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
@@ -441,7 +441,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_callback_succeeds_on_no_mp4() {
-		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
@@ -461,7 +461,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_callback_succeeds_on_no_ogg() {
-		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
@@ -482,7 +482,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_callback_succeeds_on_no_webm() {
-		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
@@ -502,7 +502,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_callback_fails_on_no_video() {
-		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['snapshot'] = 'http://example.com/snapshot.png';
@@ -514,7 +514,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_checks_mime_type() {
-		$_GET['code'] = wp_hash( $this->png_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->png_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->png_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';
@@ -529,7 +529,7 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 	}
 
 	function test_webhook_callback_sets_mp4_url_nopriv() {
-		$_GET['code'] = wp_hash( $this->gif_id );
+		$_GET['code'] = wp_hash( 'gif2html5-' . $this->gif_id );
 		$_GET['action'] = 'gif2html5_convert_cb';
 		$_POST['attachment_id'] = $this->gif_id;
 		$_POST['mp4'] = 'http://example.com/mp4.mp4';

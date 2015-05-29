@@ -50,8 +50,8 @@ class Gif2Html5 {
 	}
 
 	private function setup_assets() {
-		wp_register_script( 'gif2html5-video-handler', plugins_url( '../js/src/video-handler.js', __FILE__ ) );
-		wp_register_script( 'gif2html5', plugins_url( '../js/src/gif2html5.js', __FILE__ ) );
+		wp_register_script( 'gif2html5-video-handler', plugins_url( 'js/src/video-handler.js', dirname( __FILE__ ) ), array( 'jquery' ), GIF2HTML5_PLUGIN_VERSION, true );
+		wp_register_script( 'gif2html5', plugins_url( 'js/src/gif2html5.js', dirname( __FILE__ ) ), array( 'jquery' ), GIF2HTML5_PLUGIN_VERSION, true );
 
 	}
 
@@ -197,7 +197,7 @@ class Gif2Html5 {
 			array(
 				'action' => $this->convert_action,
 				'attachment_id' => $attachment_id,
-				'code' => wp_hash( $attachment_id ),
+				'code' => wp_hash( 'gif2html5-' . $attachment_id ),
 				),
 			admin_url( 'admin-post.php' )
 		);
@@ -237,7 +237,7 @@ class Gif2Html5 {
 		}
 
 		$code = sanitize_text_field( $_GET['code'] );
-		if ( ! $code || wp_hash( $attachment_id ) !== $code ) {
+		if ( ! $code || wp_hash( 'gif2html5-' . $attachment_id ) !== $code ) {
 			return;
 		}
 
