@@ -435,7 +435,7 @@ class Gif2Html5 {
 	public function filter_the_content_img_to_video( $html ) {
 		wp_enqueue_script( 'gif2html5-video-handler' );
 		wp_enqueue_script( 'gif2html5' );
-		wp_enqueue_style( 'gif2html5', plugins_url( 'css/gif2html5.css', dirname( __FILE__ ) ), array(), '0.1-alpha' );
+		wp_enqueue_style( 'gif2html5', plugins_url( 'css/gif2html5.css', dirname( __FILE__ ) ), array(), GIF2HTML5_PLUGIN_VERSION );
 		return $this->img_to_video( $html );
 	}
 
@@ -564,7 +564,6 @@ class Gif2Html5 {
 				$sources[] = '<source src="' . esc_url( $url ) . '" type="' . esc_attr( $video_type_info['mime_type'] ) . '">';
 			}
 		}
-		
 		$div_container = '<div class="' . $this->gif2html5_class . '-container">';
 
 		return $div_container . '<video '
