@@ -17,6 +17,10 @@
 		border-radius: 32px;
 	}
 
+	.gif2html5-video-container.played:before {
+		display: none;
+	}
+
 	.gif2html5-video-container {
 		position: relative;
 	}

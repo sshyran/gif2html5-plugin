@@ -23,6 +23,10 @@ var VideoHandler = (function($) {
 				videos.on('click', function() {
 					this.play();
 				});
+
+				$('.gif2html5-video-container').on('click', function() {
+					$(this).addClass('played');
+				});
 			}
 		}
 	};
