@@ -12,8 +12,6 @@ var VideoHandler = (function($) {
 						gif.attr('alt', object.getAttribute('alt'));
 						gif.attr('src', object.getAttribute('data-gif'));
 						gif.attr('srcset', object.getAttribute('srcset'));	
-						gif.html(video.innerHTML);
-
 						video.parentNode.replaceChild(gif.get(0), video);
 					});
 
