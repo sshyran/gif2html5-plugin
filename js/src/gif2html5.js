@@ -19,41 +19,41 @@
 				bool = new Boolean(bool);
 				bool.ogg = elem.canPlayType('video/ogg; codecs="theora"').replace(/^no$/, '');
 
-			// Without QuickTime, this value will be `undefined`. github.com/Modernizr/Modernizr/issues/546
-			bool.h264 = elem.canPlayType('video/mp4; codecs="avc1.42E01E"').replace(/^no$/, '');
+				// Without QuickTime, this value will be `undefined`. github.com/Modernizr/Modernizr/issues/546
+				bool.h264 = elem.canPlayType('video/mp4; codecs="avc1.42E01E"').replace(/^no$/, '');
 
-			bool.webm = elem.canPlayType('video/webm; codecs="vp8, vorbis"').replace(/^no$/, '');
+				bool.webm = elem.canPlayType('video/webm; codecs="vp8, vorbis"').replace(/^no$/, '');
 
-			bool.vp9 = elem.canPlayType('video/webm; codecs="vp9"').replace(/^no$/, '');
+				bool.vp9 = elem.canPlayType('video/webm; codecs="vp9"').replace(/^no$/, '');
 
-			bool.hls = elem.canPlayType('application/x-mpegURL; codecs="avc1.42E01E"').replace(/^no$/, '');
-		}
-	} catch (e) {}
+				bool.hls = elem.canPlayType('application/x-mpegURL; codecs="avc1.42E01E"').replace(/^no$/, '');
+			}
+		} catch (e) {}
 
-	return bool;
-}
-
-var videoSupport = videoTest();
-
-function addTest(result) {
-	if (result) {
-		document.documentElement.className += ' gif2html5-videoautoplay';
-	} else {
-		document.documentElement.className += ' no-gif2html5-videoautoplay';
+		return bool;
 	}
-}
 
-var timeout;
-var waitTime = 300;
-var elem = document.createElement('video');
-var elemStyle = elem.style;
+	var videoSupport = videoTest();
 
-function testAutoplay(arg) {
-	clearTimeout(timeout);
-	elem.removeEventListener('playing', testAutoplay, false);
-	addTest(arg && arg.type === 'playing' || elem.currentTime !== 0);
-	elem.parentNode.removeChild(elem);
-}
+	function addTest(result) {
+		if (result) {
+			document.documentElement.className += ' gif2html5-videoautoplay';
+		} else {
+			document.documentElement.className += ' no-gif2html5-videoautoplay';
+		}
+	}
+
+	var timeout;
+	var waitTime = 300;
+	var elem = document.createElement('video');
+	var elemStyle = elem.style;
+
+	function testAutoplay(arg) {
+		clearTimeout(timeout);
+		elem.removeEventListener('playing', testAutoplay, false);
+		addTest(arg && arg.type === 'playing' || elem.currentTime !== 0);
+		elem.parentNode.removeChild(elem);
+	}
 
 	//skip the test if video itself, or the autoplay
 	//element on it isn't supported
