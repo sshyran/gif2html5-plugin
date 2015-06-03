@@ -20,15 +20,15 @@ var VideoHandler = (function($) {
 				});
 			},
 			handleMobile : function() {
-				videos.on('click', function() {
-					this.play();
-				});
-
 				$('.gif2html5-video-container').on('click', function() {
-					var container = $(this);
-					container.addClass('played');
-					container.find('video').trigger('click');
-
+					var $container = $(this);
+					if (!$container.hasClass('played')) {
+						$container.addClass('played');
+						var $video = $container.find('video.gif2html5-video');
+						if ($video.length > 0) {
+							$video.get(0).play();
+						}
+					}
 				});
 			}
 		}
