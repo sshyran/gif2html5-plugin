@@ -10,7 +10,7 @@
 
 (function() {
 
-	function videoTest() {
+	var videoSupport = (function () {
 		var elem = document.createElement('video');
 		var bool = false;
 		// IE9 Running on Windows Server SKU can cause an exception to be thrown, bug #224
@@ -31,9 +31,7 @@
 		} catch (e) {}
 
 		return bool;
-	}
-
-	var videoSupport = videoTest();
+	})();
 
 	function addTest(result) {
 		if (result) {
