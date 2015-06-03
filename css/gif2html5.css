@@ -1,6 +1,6 @@
-.no-gif2html5-videoautoplay .gif2html5-video-container {
+.gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container {
   position: relative; }
-  .no-gif2html5-videoautoplay .gif2html5-video-container:before {
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container:before {
     content: ' ';
     background-image: url("../images/play.png");
     position: absolute;
@@ -15,8 +15,8 @@
     margin-left: -16px;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 32px; }
-  .no-gif2html5-videoautoplay .gif2html5-video-container.played:before {
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container.played:before {
     display: none; }
 
-.no-gif2html5-videoautoplay .gif2html5-video::-webkit-media-controls {
+.gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video::-webkit-media-controls {
   display: none !important; }
