@@ -1,0 +1,37 @@
+@mixin gif2html5-mobile {
+	.gif2html5-video-container {
+		position: relative;
+		&:before {
+			content: ' ';
+			background-image: url('../images/play.png');
+			position: absolute;
+			background-size: 100%;
+			left: 50%;
+			top: 50%;
+			z-index: 999;
+			display: block;
+			width: 32px;
+			height: 32px;
+			margin-top: -16px;
+			margin-left: -16px;
+			background-color: rgba(0,0,0,0.5);
+			border-radius: 32px;
+		}
+		&.played:before {
+			display: none;
+		}
+	}
+	.gif2html5-video::-webkit-media-controls {
+		display:none !important;
+	}
+}
+
+.gif2html5-no-modernizr {
+	@media only screen and (max-width: 760px) {
+		@include gif2html5-mobile;
+	}
+}
+
+.no-gif2html5-videoautoplay {
+	@include gif2html5-mobile;
+}
