@@ -1,4 +1,4 @@
-@mixin gif2html5-mobile {
+.no-gif2html5-videoautoplay {
 	.gif2html5-video-container {
 		position: relative;
 		&:before {
@@ -24,14 +24,4 @@
 	.gif2html5-video::-webkit-media-controls {
 		display:none !important;
 	}
-}
-
-.gif2html5-no-modernizr {
-	@media only screen and (max-width: 760px) {
-		@include gif2html5-mobile;
-	}
-}
-
-.no-gif2html5-videoautoplay {
-	@include gif2html5-mobile;
 }
