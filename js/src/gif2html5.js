@@ -48,7 +48,7 @@
 	}
 
 	var timeout;
-	var waitTime = 300;
+	var waitTime = 2000;
 	var elem = document.createElement('video');
 	var elemStyle = elem.style;
 
