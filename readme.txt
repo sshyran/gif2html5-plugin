@@ -51,11 +51,7 @@ Now you should be ready to use the plugin.
 
 = Filters =
 
-The plugin defines two filters.
-
-The `gif2html5_mp4_url` can be used to modify the URL returned from the `Gif2Html5::get_mp4_url` method. Functions added to this filter take the URL as a first argument, and the attachment ID as a second optional argument.
-
-The `gif2html5_snapshot_url` can be used to modify the URL returned from the `Gif2Html5::get_snapshot_url` method. Functions added to this filter take the URL as a first argument, and the attachment ID as a second optional argument.
+The plugin defines four filters for altering the URLs of assets `gif2html5_mp4_url`, `gif2html5_ogv_url`, `gif2html5_webm_url`, `gif2html5_snapshot_url`. These filters can be used to modify the URLs returned from `Gif2Html5::get_mp4_url`, `Gif2Html5::get_ogg_url`, `Gif2Html5::get_webm_url`, `Gif2Html5::get_snapshot_url` respectively. Each filter is provided with the asset URL as the first argument, and the attachment ID as the second argument.
 
 You might want to use these filters if you've configured a DNS name as an alias for the S3 bucket used by the image conversion service. Here's how you might handle that situation:
 
@@ -68,5 +64,7 @@ function replace_gif2html5_url( $url ) {
 	return $parsed_url['scheme'] . '://' . MYSITE_GIF2HTML5_URL_DOMAIN . '/' . implode( '/', array_slice( $paths, 2 ) );
 }
 add_filter( 'gif2html5_mp4_url', 'replace_gif2html5_url' );
+add_filter( 'gif2html5_ogv_url', 'replace_gif2html5_url' );
+add_filter( 'gif2html5_webm_url', 'replace_gif2html5_url' );
 add_filter( 'gif2html5_snapshot_url', 'replace_gif2html5_url' );
 ```
