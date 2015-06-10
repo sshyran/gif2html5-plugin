@@ -35,6 +35,49 @@ module.exports = function( grunt ) {
 				standard: "phpcs.ruleset.xml"
 			}
 		},
+		
+		jasmine: {
+			dev: {
+				src: ['js/src/**/*.js'],
+				options: {
+					specs: 'js-tests/specs/**/*.js',
+					outfile: '_SpecRunner.html',
+					display: 'short',
+					summary: true,
+					vendor: [
+						'js-tests/vendors/jquery/jquery-1.11.3.min.js',
+						'js-tests/vendors/jasmine-jquery/jasmine-jquery.js'
+					]
+				}
+			}
+		},
+
+
+		sass: {
+			compile: {
+				files: {
+					'css/gif2html5.css' : 'css/src/gif2html5.scss',
+				}
+			}
+
+		},
+
+		watch: {
+			scripts: {
+				files: ['js/**/*.js', 'js-tests/**/*.js'],
+				tasks: ['test'],
+				options: {
+					debounceDelay: 500
+				}
+			},
+			styles: {
+				files: ['css/src/*.scss'],
+				tasks: ['sass'],
+				options: {
+					debounceDelay: 500,
+				}
+			},
+		},
 
 		makepot: {
 			target: {
@@ -56,7 +99,11 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-wp-i18n' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
 	grunt.loadNpmTasks( 'grunt-phpcs' );
+	grunt.loadNpmTasks( 'grunt-contrib-jasmine' );
+	grunt.loadNpmTasks( 'grunt-contrib-watch' );
+	grunt.loadNpmTasks( 'grunt-sass' );
 	grunt.registerTask( 'i18n', ['addtextdomain', 'makepot'] );
+	grunt.registerTask( 'test', ['jasmine'] );
 	grunt.registerTask( 'readme', ['wp_readme_to_markdown']);
 
 	grunt.util.linefeed = '\n';
