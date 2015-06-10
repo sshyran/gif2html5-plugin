@@ -1,10 +1,9 @@
 # Gif2html5 #
 **Contributors:** fusionengineering  
-**Donate link:** http://example.com/  
-**Tags:** comments, spam  
+**Tags:** images  
 **Requires at least:** 3.0.1  
-**Tested up to:** 3.4  
-**Stable tag:** 4.3  
+**Tested up to:** 4.2  
+**Stable tag:** 0.1  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -38,4 +37,34 @@ If you've chosen to secure your web application with an API key (the GIF2HTML5_A
 set_option( 'gif2html_api_key', 'secret-api-key' );
 ```
 
+Instead of storing these options directly in the database, it might be preferable to set them via a `pre_option_` filter like this:
+
+```PHP
+define( 'MYSITE_GIF2HTML5_API_URL', 'https://my-web-app.herokuapp.com/convert' );
+define( 'MYSITE_GIF2HTML5_API_KEY', 'secret-api-key' );
+...
+add_filter( 'pre_option_gif2html5_api_url', function() { return MYSITE_GIF2HTML5_API_URL } );
+add_filter( 'pre_option_gif2html5_api_key', function() { return MYSITE_GIF2HTML5_API_KEY } );
+```
+
 Now you should be ready to use the plugin.
+
+### Filters ###
+
+The plugin defines four filters for altering the URLs of assets `gif2html5_mp4_url`, `gif2html5_ogv_url`, `gif2html5_webm_url`, `gif2html5_snapshot_url`. These filters can be used to modify the URLs returned from `Gif2Html5::get_mp4_url`, `Gif2Html5::get_ogg_url`, `Gif2Html5::get_webm_url`, `Gif2Html5::get_snapshot_url` respectively. Each filter is provided with the asset URL as the first argument, and the attachment ID as the second argument.
+
+You might want to use these filters if you've configured a DNS name as an alias for the S3 bucket used by the image conversion service. Here's how you might handle that situation:
+
+```PHP
+define( 'MYSITE_GIF2HTML5_URL_DOMAIN', 'assets.mysite.com' );
+...
+function replace_gif2html5_url( $url ) {
+	$parsed_url = parse_url($url);
+	$paths = explode( '/', $parsed_url['path'] );
+	return $parsed_url['scheme'] . '://' . MYSITE_GIF2HTML5_URL_DOMAIN . '/' . implode( '/', array_slice( $paths, 2 ) );
+}
+add_filter( 'gif2html5_mp4_url', 'replace_gif2html5_url' );
+add_filter( 'gif2html5_ogv_url', 'replace_gif2html5_url' );
+add_filter( 'gif2html5_webm_url', 'replace_gif2html5_url' );
+add_filter( 'gif2html5_snapshot_url', 'replace_gif2html5_url' );
+```
