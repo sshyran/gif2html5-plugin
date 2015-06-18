@@ -15,7 +15,7 @@ When a user adds a new GIF to the Media library, or updates an existing GIF, GIF
 
 This plugin does not handle the actual file transformation routine. The transformation is handled by a [standalone web application](https://github.com/fusioneng/gif2html5-app). GIF2HTML5 sends the URL of the GIF to the web application, and the web application responds asynchronously with a POST handled via `admin_post`.
 
-When the GIF2HTML5 plugin receives the POST from the web application, it receives MP4, OGG, and WEBM video URLs, and a poster image URL, and saves those as post meta fields of the GIF attachment.
+When the GIF2HTML5 plugin receives the POST from the web application, it receives MP4, OGV, and WebM video URLs, and a poster image URL, and saves those as post meta fields of the GIF attachment.
 
 The GIF2HTML5 plugin filters post content, and replaces `img` elements with `video` elements when the video file replacements are available.
 
