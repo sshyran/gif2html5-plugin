@@ -1,5 +1,5 @@
 # GIF2HTML5 #
-**Contributors:** fusionengineering  
+**Contributors:** fusionengineering, mpatek, noppanit, danielbachhuber, davisshaver  
 **Tags:** images  
 **Requires at least:** 3.0.1  
 **Tested up to:** 4.2  
