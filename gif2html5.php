@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Gif2Html5
+ * Plugin Name: GIF2HTML5
  * Version: 0.1.0
- * Description: Convert animated gifs to mp4s.
+ * Description: Transform animated GIF attachments to HTML5 video
  * Author: Fusion Engineering and community
  * Author URI: http://fusion.net/section/tech-product/
  * Text Domain: gif2html5
