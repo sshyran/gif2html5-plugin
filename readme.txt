@@ -1,27 +1,27 @@
 === GIF2HTML5 ===
 Contributors: fusionengineering, mpatek, noppanit, danielbachhuber, davisshaver
-Tags: images
-Requires at least: 3.0.1
+Tags: images, GIF, videos, performance
+Requires at least: 4.2
 Tested up to: 4.2
 Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-GIF2HTML5 translates animated GIF attachments to MP4, and displays the MP4 in place of the original GIF.
+GIF2HTML5 transforms animated GIF attachments to HTML5 video, using a separate application, and displays the HTML5 video in place of the original GIF.
 
 == Description ==
 
-When a user adds a new GIF to the Media library, or updates an existing GIF, GIF2HTML5 will start the image translation process.
+When a user adds a new GIF to the Media library, or updates an existing GIF, GIF2HTML5 will start the image transformation process.
 
-This plugin does not handle the actual file translation routine. The translation is handled by a standalone web application. GIF2HTML5 sends the URL of the GIF to the web application, and the web application responds asynchronously with a POST handled via `admin_post`.
+This plugin does not handle the actual file transformation routine. The transformation is handled by a [standalone web application](https://github.com/fusioneng/gif2html5-app). GIF2HTML5 sends the URL of the GIF to the web application, and the web application responds asynchronously with a POST handled via `admin_post`.
 
-When the GIF2HTML5 plugin receives the POST from the web application, it receives an MP4 URL and a poster image URL, and saves those as post meta fields of the GIF attachment.
+When the GIF2HTML5 plugin receives the POST from the web application, it receives MP4, OGV, and WebM video URLs, and a poster image URL, and saves those as post meta fields of the GIF attachment.
 
-The GIF2HTML5 plugin filters post content, and replaces `img` elements with `video` elements where MP4 replacements are available.
+The GIF2HTML5 plugin filters post content, and replaces `img` elements with `video` elements when the video file replacements are available.
 
 == Installation ==
 
-The standalone web application is a requirement. In order to set up the web application, you should clone it from the GitHub repository, and follow the setup instructions [here](https://github.com/fusioneng/gif2html5-app).
+The [separate, standalone web application](https://github.com/fusioneng/gif2html5-app) is a requirement. In order to set up the web application, you should clone it from the GitHub repository, and follow the setup instructions.
 
 Once you have your web application running. You will need to set the `gif2html5_api_url` option to the `/convert` endpoint of your web application.
 
@@ -37,7 +37,7 @@ If you've chosen to secure your web application with an API key (the GIF2HTML5_A
 set_option( 'gif2html_api_key', 'secret-api-key' );
 ```
 
-Instead of storing these options directly in the database, it might be preferable to set them via a `pre_option_` filter like this:
+Instead of storing these options directly in the database, it might be preferable to set them via a runtime `pre_option_` filter like this:
 
 ```PHP
 define( 'MYSITE_GIF2HTML5_API_URL', 'https://my-web-app.herokuapp.com/convert' );
@@ -47,7 +47,7 @@ add_filter( 'pre_option_gif2html5_api_url', function() { return MYSITE_GIF2HTML5
 add_filter( 'pre_option_gif2html5_api_key', function() { return MYSITE_GIF2HTML5_API_KEY } );
 ```
 
-Now you should be ready to use the plugin.
+Now you are ready to use the plugin.
 
 = Filters =
 
@@ -68,3 +68,9 @@ add_filter( 'gif2html5_ogv_url', 'replace_gif2html5_url' );
 add_filter( 'gif2html5_webm_url', 'replace_gif2html5_url' );
 add_filter( 'gif2html5_snapshot_url', 'replace_gif2html5_url' );
 ```
+
+== Changelog ==
+
+= 0.1.0 (June 18, 2015) =
+
+* Initial release.
