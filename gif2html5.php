@@ -4,7 +4,7 @@
  * Version: 0.1.0
  * Description: Convert animated gifs to mp4s.
  * Author: Fusion Engineering and community
- * Author URI: http://next.fusion.net/tag/gif2html5/
+ * Author URI: http://fusion.net/section/tech-product/
  * Text Domain: gif2html5
  * License: GPL v2 or later
  *
