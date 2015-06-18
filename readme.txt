@@ -1,4 +1,4 @@
-=== Gif2html5 ===
+=== GIF2HTML5 ===
 Contributors: fusionengineering
 Tags: images
 Requires at least: 3.0.1
@@ -7,17 +7,17 @@ Stable tag: 0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Gif2Html5 translates animated GIF attachments to MP4, and displays the MP4 in place of the original GIF.
+GIF2HTML5 translates animated GIF attachments to MP4, and displays the MP4 in place of the original GIF.
 
 == Description ==
 
-When a user adds a new GIF to the Media library, or updates an existing GIF, Gif2Html will start the image translation process.
+When a user adds a new GIF to the Media library, or updates an existing GIF, GIF2HTML5 will start the image translation process.
 
-This plugin does not handle the actual file translation routine. The translation is handled by a standalone web application. Gif2Html sends the URL of the GIF to the web application, and the web application responds asynchronously with a POST handled via `admin_post`.
+This plugin does not handle the actual file translation routine. The translation is handled by a standalone web application. GIF2HTML5 sends the URL of the GIF to the web application, and the web application responds asynchronously with a POST handled via `admin_post`.
 
-When the gif2html5 plugin receives the POST from the web application, it receives an MP4 URL and a poster image URL, and saves those as post meta fields of the GIF attachment.
+When the GIF2HTML5 plugin receives the POST from the web application, it receives an MP4 URL and a poster image URL, and saves those as post meta fields of the GIF attachment.
 
-The gif2html5 plugin filters post content, and replaces `img` elements with `video` elements where MP4 replacements are available.
+The GIF2HTML5 plugin filters post content, and replaces `img` elements with `video` elements where MP4 replacements are available.
 
 == Installation ==
 
