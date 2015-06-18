@@ -68,3 +68,9 @@ add_filter( 'gif2html5_ogv_url', 'replace_gif2html5_url' );
 add_filter( 'gif2html5_webm_url', 'replace_gif2html5_url' );
 add_filter( 'gif2html5_snapshot_url', 'replace_gif2html5_url' );
 ```
+
+== Changelog ==
+
+= 0.1.0 (June 18, 2015) =
+
+* Initial release.
