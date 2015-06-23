@@ -1,8 +1,8 @@
-.gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container {
+.gif2html5-support-video.no-gif2html5-support-videoautoplay:not[class~="gif2html5-support-ios"] .gif2html5-video-container {
   position: relative; }
-  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container:before {
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay:not[class~="gif2html5-support-ios"] .gif2html5-video-container:before {
     content: ' ';
-    background-image: url("../images/play.png");
+    background-image: url("../images/loading.gif");
     position: absolute;
     background-size: 100%;
     left: 50%;
@@ -12,11 +12,9 @@
     width: 32px;
     height: 32px;
     margin-top: -16px;
-    margin-left: -16px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 32px; }
-  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container.played:before {
+    margin-left: -16px; }
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay:not[class~="gif2html5-support-ios"] .gif2html5-video-container.played:before {
     display: none; }
 
-.gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video::-webkit-media-controls {
+.gif2html5-support-video.no-gif2html5-support-videoautoplay:not[class~="gif2html5-support-ios"] .gif2html5-video::-webkit-media-controls {
   display: none !important; }

@@ -1,9 +1,9 @@
-.gif2html5-support-video.no-gif2html5-support-videoautoplay {
+.gif2html5-support-video.no-gif2html5-support-videoautoplay:not[class~="gif2html5-support-ios"] {
 	.gif2html5-video-container {
 		position: relative;
 		&:before {
 			content: ' ';
-			background-image: url('../images/play.png');
+			background-image: url('../images/loading.gif');
 			position: absolute;
 			background-size: 100%;
 			left: 50%;
@@ -14,8 +14,6 @@
 			height: 32px;
 			margin-top: -16px;
 			margin-left: -16px;
-			background-color: rgba(0,0,0,0.5);
-			border-radius: 32px;
 		}
 		&.played:before {
 			display: none;
