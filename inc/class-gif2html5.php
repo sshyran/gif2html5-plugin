@@ -640,7 +640,7 @@ class Gif2Html5 {
 		if ( get_post_meta( $id, 'extremely_large_gif', true ) ) {
 			$attributes['class'] .= ' extremely-large-gif';
 		}
-		return $attributes;
+		return apply_filters( 'gif2html5_video_element_attributes', $attributes, $id );
 	}
 
 }
