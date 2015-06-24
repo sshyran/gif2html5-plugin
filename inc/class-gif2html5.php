@@ -634,8 +634,10 @@ class Gif2Html5 {
 		$attributes['class'] = trim(
 			( isset( $attributes['class'] ) ? $attributes['class'] : '' )
 			. ' ' . $this->gif2html5_class . ' ' . $this->gif2html5_class .'-' . $id
-			. ( get_post_meta( $id, 'extremely_large_gif', true ) ? ' extremely-large-gif' : '' )
 		);
+		if ( get_post_meta( $id, 'extremely_large_gif', true ) ) {
+			$attributes['class'] .= ' extremely-large-gif';
+		}
 		return $attributes;
 	}
 

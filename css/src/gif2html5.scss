@@ -22,8 +22,10 @@
 	.gif2html5-video {
 		max-width: 100%;
 		height: auto;
-		&::-webkit-media-controls {
-			display:none !important;
+		&:not([class~="extremely-large-gif"]) {
+			&::-webkit-media-controls {
+				display:none !important;
+			}
 		}
 	}
 }

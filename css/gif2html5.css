@@ -20,7 +20,7 @@
 .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video {
   max-width: 100%;
   height: auto; }
-  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video::-webkit-media-controls {
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video:not([class~="extremely-large-gif"])::-webkit-media-controls {
     display: none !important; }
 
 @-webkit-keyframes loader {

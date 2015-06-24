@@ -39,7 +39,19 @@ var VideoHandler = (function($) {
 				var $video = $videoContainer.find('video');
 
 				if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) {
-					fallbackGif($video);
+					if ($video.hasClass('extremely-large-gif')) {
+						$videoContainer.css({
+							display: 'block',
+							width: '100%',
+							height: '100%',
+							content: ' '
+						}).on('click', function() {
+							console.log( $(this) );
+							$video.get(0).play();
+						});
+					} else {
+						fallbackGif($video);
+					}
 				} else {
 					$video.get(0).play();
 				}
@@ -59,9 +71,7 @@ var VideoHandler = (function($) {
 				});
 			},
 			handleMobile : function() {
-
 				var _buffer = null;
-
 				$window.on('scroll resize load', function ( e ) {
 					if ( !_buffer && $videos.length ) {
 						_buffer = setTimeout(function () {
@@ -70,7 +80,6 @@ var VideoHandler = (function($) {
 						}, 300);
 					}
 				});
-
 			},
 		}
 	};
