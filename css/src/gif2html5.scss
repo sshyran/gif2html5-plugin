@@ -1,5 +1,6 @@
-.gif2html5-support-video.no-gif2html5-support-videoautoplay:not[class~="gif2html5-support-ios"] {
+.gif2html5-support-video.no-gif2html5-support-videoautoplay {
 	.gif2html5-video-container {
+		display: inline-block;
 		position: relative;
 		&:before {
 			content: ' ';
@@ -19,7 +20,11 @@
 			display: none;
 		}
 	}
-	.gif2html5-video::-webkit-media-controls {
-		display:none !important;
+	.gif2html5-video {
+		max-width: 100%;
+		height: auto;
+		&::-webkit-media-controls {
+			display:none !important;
+		}
 	}
 }
