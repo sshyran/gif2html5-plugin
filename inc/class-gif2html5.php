@@ -140,6 +140,10 @@ class Gif2Html5 {
 			return;
 		}
 
+		if ( $this->file_size_check ) {
+			update_post_meta( $attachment_id, 'extremely_large_gif', true );
+		}
+
 		if ( ! empty( $_POST['gif2html5_unset_conversion_response_pending'] ) ) {
 			$this->unset_conversion_response_pending( $attachment_id );
 			return;
@@ -156,6 +160,25 @@ class Gif2Html5 {
 	 */
 	public function mime_type_check( $attachment_id ) {
 		return 'image/gif' === get_post_mime_type( $attachment_id );
+	}
+
+	/**
+	 * Determine whether the image is too large to serve the fallback gif
+	 *
+	 * Because of iOS's undesirable video experience, we serve the fallback gif
+	 * to iOS visitors in most cases. Images over 1MB, however are always
+	 * served as video if possible.
+	 *
+	 * @param int $attachment_id the ID of the attachment.
+	 * @return bool true if image is larger than maximum size
+	 */
+	public function file_size_check( $attachment_id ) {
+		$filesize = get_filesize( get_attached_file( $attachment_id ) );
+		$max_filesize = apply_filters( 'gif2html5_max_filesize', 1024 * 1024 );
+
+		return $filesize > $max_filesize;
+
+
 	}
 
 	/**
@@ -611,6 +634,7 @@ class Gif2Html5 {
 		$attributes['class'] = trim(
 			( isset( $attributes['class'] ) ? $attributes['class'] : '' )
 			. ' ' . $this->gif2html5_class . ' ' . $this->gif2html5_class .'-' . $id
+			. ( get_post_meta( $id, 'extremely_large_gif', true ) ? ' extremely-large-gif' : '' )
 		);
 		return $attributes;
 	}
