@@ -23,7 +23,7 @@ var VideoHandler = (function($) {
 					$videos = $('.gif2html5-video-container'),
 					_buffer = null;
 
-				$window.on('scroll', function ( e ) {
+				$window.on('scroll resize load', function ( e ) {
 					if ( !_buffer && $videos.length ) {
 						_buffer = setTimeout(function () {
 							checkInView( e );
