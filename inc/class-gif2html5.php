@@ -173,12 +173,14 @@ class Gif2Html5 {
 	 * @return bool true if image is larger than maximum size
 	 */
 	public function file_size_check( $attachment_id ) {
+		$attached_file = get_attached_file( $attachment_id );
+		if ( ! $attached_file || ! file_exists( $attached_file ) ) {
+			return false;
+		}
 		$filesize = filesize( get_attached_file( $attachment_id ) );
 		$max_filesize = apply_filters( 'gif2html5_max_filesize', 1024 * 1024 );
 
 		return $filesize > $max_filesize;
-
-
 	}
 
 	/**
