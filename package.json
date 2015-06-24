@@ -4,8 +4,10 @@
   "main": "Gruntfile.js",
   "author": "YOUR NAME HERE",
   "devDependencies": {
+    "autoprefixer-core": "^5.2.1",
     "grunt": "^0.4.5",
     "grunt-phpcs": "^0.4.0",
+    "grunt-postcss": "^0.5.2",
     "grunt-sass": "^1.0.0",
     "grunt-wp-i18n": "^0.5.0",
     "grunt-wp-readme-to-markdown": "~0.9.0"
