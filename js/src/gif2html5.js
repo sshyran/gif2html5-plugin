@@ -13,7 +13,7 @@
 				if (typeof gif2html5Support[type] === 'undefined') {
 					gif2html5Support[type] = !!(test)();
 					localStorage.setItem('gif2html5-support',JSON.stringify(gif2html5Support));
-				} 
+				}
 				if (gif2html5Support[type]) {
 					document.documentElement.className += ' gif2html5-support-' + type;
 				} else {
@@ -47,7 +47,7 @@
 			function testVideoSupport() {
 				return videoSupport;
 			}
-			
+
 			indicateSupport('video', testVideoSupport);
 
 			function indicateAutoplaySupport(test) {

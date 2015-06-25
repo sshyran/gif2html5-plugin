@@ -3,25 +3,57 @@
 		position: relative;
 		&:before {
 			content: ' ';
-			background-image: url('../images/play.png');
+			width: 36px;
+			height: 36px;
+			border: 6px solid #fff;
 			position: absolute;
-			background-size: 100%;
 			left: 50%;
 			top: 50%;
 			z-index: 999;
 			display: block;
-			width: 32px;
-			height: 32px;
-			margin-top: -16px;
-			margin-left: -16px;
-			background-color: rgba(0,0,0,0.5);
-			border-radius: 32px;
+			margin-top: -18px;
+			margin-left: -18px;
+			animation: loader 2s infinite ease;
 		}
-		&.played:before {
+		&.loaded:before {
 			display: none;
 		}
+		&.playable {
+			.gif2html5-video::-webkit-media-controls {
+				display: block !important;
+			}
+		}
 	}
-	.gif2html5-video::-webkit-media-controls {
-		display:none !important;
+	.gif2html5-video {
+		max-width: 100%;
+		height: auto;
+		&::-webkit-media-controls {
+			display:none !important;
+		}
+	}
+
+}
+
+@keyframes loader {
+	0% {
+		opacity: 0.25;
+		transform: rotate(0deg);
+	}
+	25% {
+		opacity: 0.75;
+		transform: rotate(180deg);
+	}
+	50% {
+		opacity: 0.25;
+		transform: rotate(180deg);
+	}
+	75% {
+		opacity: 0.75;
+		transform: rotate(360deg);
+	}
+	100% {
+		opacity: 0.25;
+		transform: rotate(360deg);
 	}
 }
+

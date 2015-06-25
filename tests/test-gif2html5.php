@@ -729,4 +729,29 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertContains( 'data-gif', $html );
 	}
 
+	function test_filesize_classname_unknown() {
+		$filesize_classname = Gif2Html5()->filesize_classname_attribute( $this->gif_id );
+		$this->assertEquals( 'gif2html5-unknown-filesize', $filesize_classname );
+	}
+
+	function test_filesize_classname_appropriately_sized() {
+		update_post_meta( $this->gif_id, 'gif2html5_gif_size', 400 * 1024 );
+		$filesize_classname = Gif2Html5()->filesize_classname_attribute( $this->gif_id );
+		$this->assertEquals( '', $filesize_classname );
+
+		add_filter( 'gif2html5_max_filesize', function() { return 200 * 1024; } );
+		$filesize_classname = Gif2Html5()->filesize_classname_attribute( $this->gif_id );
+		$this->assertEquals( 'gif2html5-extremely-large-gif', $filesize_classname );
+	}
+
+	function test_filesize_classname_extremely_large_gif() {
+		update_post_meta( $this->gif_id, 'gif2html5_gif_size', 2 * 1024 * 1024 );
+		$filesize_classname = Gif2Html5()->filesize_classname_attribute( $this->gif_id );
+		$this->assertEquals( 'gif2html5-extremely-large-gif', $filesize_classname );
+
+		add_filter( 'gif2html5_max_filesize', function() { return 3 * 1024 * 1024; } );
+		$filesize_classname = Gif2Html5()->filesize_classname_attribute( $this->gif_id );
+		$this->assertEquals( '', $filesize_classname );
+	}
 }
+

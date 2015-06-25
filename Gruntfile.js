@@ -62,6 +62,17 @@ module.exports = function( grunt ) {
 
 		},
 
+		postcss: {
+			options: {
+				processors: [
+					require('autoprefixer-core')(),
+				]
+			},
+			stylesheet: {
+				src: 'css/gif2html5.css'
+			},
+		},
+
 		watch: {
 			scripts: {
 				files: ['js/**/*.js', 'js-tests/**/*.js'],
@@ -72,7 +83,7 @@ module.exports = function( grunt ) {
 			},
 			styles: {
 				files: ['css/src/*.scss'],
-				tasks: ['sass'],
+				tasks: ['sass','postcss'],
 				options: {
 					debounceDelay: 500,
 				}
@@ -101,6 +112,7 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-phpcs' );
 	grunt.loadNpmTasks( 'grunt-contrib-jasmine' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
+	grunt.loadNpmTasks( 'grunt-postcss' );
 	grunt.loadNpmTasks( 'grunt-sass' );
 	grunt.registerTask( 'i18n', ['addtextdomain', 'makepot'] );
 	grunt.registerTask( 'test', ['jasmine'] );

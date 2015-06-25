@@ -2,21 +2,69 @@
   position: relative; }
   .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container:before {
     content: ' ';
-    background-image: url("../images/play.png");
+    width: 36px;
+    height: 36px;
+    border: 6px solid #fff;
     position: absolute;
-    background-size: 100%;
     left: 50%;
     top: 50%;
     z-index: 999;
     display: block;
-    width: 32px;
-    height: 32px;
-    margin-top: -16px;
-    margin-left: -16px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 32px; }
-  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container.played:before {
+    margin-top: -18px;
+    margin-left: -18px;
+    -webkit-animation: loader 2s infinite ease;
+            animation: loader 2s infinite ease; }
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container.loaded:before {
     display: none; }
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container.playable .gif2html5-video::-webkit-media-controls {
+    display: block !important; }
 
-.gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video::-webkit-media-controls {
-  display: none !important; }
+.gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video {
+  max-width: 100%;
+  height: auto; }
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video::-webkit-media-controls {
+    display: none !important; }
+
+@-webkit-keyframes loader {
+  0% {
+    opacity: 0.25;
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  25% {
+    opacity: 0.75;
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg); }
+  50% {
+    opacity: 0.25;
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg); }
+  75% {
+    opacity: 0.75;
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); }
+  100% {
+    opacity: 0.25;
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+@keyframes loader {
+  0% {
+    opacity: 0.25;
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  25% {
+    opacity: 0.75;
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg); }
+  50% {
+    opacity: 0.25;
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg); }
+  75% {
+    opacity: 0.75;
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); }
+  100% {
+    opacity: 0.25;
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
