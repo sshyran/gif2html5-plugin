@@ -39,7 +39,7 @@ var VideoHandler = (function($) {
 				var $video = $videoContainer.find('video');
 
 				if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) {
-					if ($video.hasClass('extremely-large-gif')) {
+					if ($video.hasClass('gif2html5-extremely-large-gif')) {
 						$videoContainer.css({
 							display: 'block',
 							width: '100%',

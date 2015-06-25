@@ -140,9 +140,7 @@ class Gif2Html5 {
 			return;
 		}
 
-		if ( $this->file_size_check( $attachment_id ) ) {
-			update_post_meta( $attachment_id, 'extremely_large_gif', true );
-		}
+		$this->check_file_size( $attachment_id );
 
 		if ( ! empty( $_POST['gif2html5_unset_conversion_response_pending'] ) ) {
 			$this->unset_conversion_response_pending( $attachment_id );
@@ -163,24 +161,50 @@ class Gif2Html5 {
 	}
 
 	/**
-	 * Determine whether the image is too large to serve the fallback gif
+	 * Set post meta value with the gif filesize.
 	 *
 	 * Because of iOS's undesirable video experience, we serve the fallback gif
-	 * to iOS visitors in most cases. Images over 1MB, however are always
-	 * served as video if possible.
+	 * to iOS visitors in most cases. Themes can choose a maximum filesize,
+	 * however, beyond which gifs will always be served as video if possible.
 	 *
 	 * @param int $attachment_id the ID of the attachment.
-	 * @return bool true if image is larger than maximum size
+	 * @return void
 	 */
-	public function file_size_check( $attachment_id ) {
+	public function check_file_size( $attachment_id ) {
 		$attached_file = get_attached_file( $attachment_id );
 		if ( ! $attached_file || ! file_exists( $attached_file ) ) {
 			return false;
 		}
 		$filesize = filesize( get_attached_file( $attachment_id ) );
+
+		update_post_meta( $attachment_id, 'gif2html5_gif_size', $filesize );
+	}
+
+	/**
+	 * Add the gif2html5-extremely-large-gif class to large gifs.
+	 *
+	 * This class is used the VideoHandler javascript to determine whether a
+	 * fallback gif should be served for iOS visitors.
+	 *
+	 * @param int Attachment ID
+	 * @param arr Attributes, as retrieved from image
+	 * @return str Classname to add to gif.
+	 */
+	function filesize_classname_attribute( $attachment_id, $attributes = array() ) {
+		$filesize_classname = '';
+		$gif_filesize = get_post_meta( $attachment_id, 'gif2html5_gif_size', true );
+
+		if ( ! $gif_filesize ) {
+			$filesize_classname = 'gif2html5-unknown-filesize';
+		}
+
 		$max_filesize = apply_filters( 'gif2html5_max_filesize', 1024 * 1024 );
 
-		return $filesize > $max_filesize;
+		if ( $gif_filesize > $max_filesize ) {
+			$filesize_classname = 'gif2html5-extremely-large-gif';
+		}
+
+		return apply_filters( 'gif2html5_filesize_classname', $filesize_classname, $attachment_id, $attributes );
 	}
 
 	/**
@@ -581,6 +605,9 @@ class Gif2Html5 {
 			$id,
 			isset( $options['attributes'] ) ? $options['attributes'] : array()
 		);
+
+		$attributes['class'] = trim( $attributes['class'] . ' ' . $this->filesize_classname_attribute( $id, $attributes ) );
+
 		$fallback = isset( $options['fallback'] ) ? $options['fallback'] : '';
 		$sources = array();
 		foreach ( $this->video_types as $video_type => $video_type_info ) {
@@ -637,9 +664,6 @@ class Gif2Html5 {
 			( isset( $attributes['class'] ) ? $attributes['class'] : '' )
 			. ' ' . $this->gif2html5_class . ' ' . $this->gif2html5_class .'-' . $id
 		);
-		if ( get_post_meta( $id, 'extremely_large_gif', true ) ) {
-			$attributes['class'] .= ' extremely-large-gif';
-		}
 		return apply_filters( 'gif2html5_video_element_attributes', $attributes, $id );
 	}
 
