@@ -34,20 +34,18 @@ var VideoHandler = (function($) {
 		}
 
 		function startPlaying($videoContainer) {
-			if (!$videoContainer.hasClass('played')) {
-				$videoContainer.addClass('played');
+			if (!$videoContainer.hasClass('loaded')) {
+				$videoContainer.addClass('loaded');
 				var $video = $videoContainer.find('video');
 
 				if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) {
 					if ($video.hasClass('gif2html5-extremely-large-gif')) {
-						$videoContainer.css({
-							display: 'block',
-							width: '100%',
-							height: '100%',
-							content: ' '
-						}).on('click', function() {
-							$video.get(0).play();
-						});
+						$videoContainer.addClass('playable')
+							.on('click', function(evt) {
+								evt.stopPropagation();
+								$video.get(0).play();
+							}
+						);
 					} else {
 						fallbackGif($video);
 					}

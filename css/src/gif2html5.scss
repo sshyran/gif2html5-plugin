@@ -15,19 +15,23 @@
 			margin-left: -18px;
 			animation: loader 2s infinite ease;
 		}
-		&.played:before {
+		&.loaded:before {
 			display: none;
+		}
+		&.playable {
+			.gif2html5-video::-webkit-media-controls {
+				display: block !important;
+			}
 		}
 	}
 	.gif2html5-video {
 		max-width: 100%;
 		height: auto;
-		&:not([class~="extremely-large-gif"]) {
-			&::-webkit-media-controls {
-				display:none !important;
-			}
+		&::-webkit-media-controls {
+			display:none !important;
 		}
 	}
+
 }
 
 @keyframes loader {

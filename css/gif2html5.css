@@ -14,13 +14,15 @@
     margin-left: -18px;
     -webkit-animation: loader 2s infinite ease;
             animation: loader 2s infinite ease; }
-  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container.played:before {
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container.loaded:before {
     display: none; }
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video-container.playable .gif2html5-video::-webkit-media-controls {
+    display: block !important; }
 
 .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video {
   max-width: 100%;
   height: auto; }
-  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video:not([class~="extremely-large-gif"])::-webkit-media-controls {
+  .gif2html5-support-video.no-gif2html5-support-videoautoplay .gif2html5-video::-webkit-media-controls {
     display: none !important; }
 
 @-webkit-keyframes loader {
