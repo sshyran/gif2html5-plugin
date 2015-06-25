@@ -46,7 +46,6 @@ var VideoHandler = (function($) {
 							height: '100%',
 							content: ' '
 						}).on('click', function() {
-							console.log( $(this) );
 							$video.get(0).play();
 						});
 					} else {
