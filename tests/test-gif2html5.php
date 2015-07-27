@@ -391,6 +391,15 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 		$this->assertEquals( $snapshot, 'http://assets.cloudfront.net/folder/snapshot.png' );
 	}
 
+	function test_element_attributes_filter() {
+		add_filter( 'gif2html5_element_attributes', function( $attributes, $attachment_id ) {
+			$attributes['src'] = 'http://photon.dev/filtered/image.gif';
+			return $attributes;
+		}, 10, 2);
+		$html = $this->get_img_to_video_html();
+		$this->assertContains( 'data-gif="http://photon.dev/filtered/image.gif"', $html );
+	}
+
 	function test_webhook_callback_unsets_pending_conversion_flag() {
 
 		Gif2Html5()->set_conversion_response_pending( $this->gif_id );

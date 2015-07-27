@@ -552,7 +552,8 @@ class Gif2Html5 {
 	public function img_to_video_element( $id, $img_element ) {
 		$attributes = $this->get_element_attributes(
 			$img_element,
-			array( 'width', 'height', 'class', 'src', 'alt', 'srcset' )
+			array( 'width', 'height', 'class', 'src', 'alt', 'srcset' ),
+			$id
 		);
 
 		return $this->get_video_element(
@@ -623,7 +624,7 @@ class Gif2Html5 {
 		. '>' . join( '', $sources ) . $fallback . '</video></div>';
 	}
 
-	private function get_element_attributes( $element_html, $att_names ) {
+	private function get_element_attributes( $element_html, $att_names, $id = null ) {
 		$html = '<html><body>' . $element_html . '</body></html>';
 		$doc = new DomDocument();
 		$doc->loadHtml( $html );
@@ -642,7 +643,7 @@ class Gif2Html5 {
 				$attributes[ $att_name ] = $att_value;
 			}
 		}
-		return $attributes;
+		return apply_filters( 'gif2html5_element_attributes', $attributes, $id );
 	}
 
 	private function attributes_string( $attributes ) {
