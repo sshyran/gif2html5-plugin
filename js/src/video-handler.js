@@ -38,19 +38,15 @@ var VideoHandler = (function($) {
 				$videoContainer.addClass('loaded');
 				var $video = $videoContainer.find('video');
 
-				if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) {
-					if ($video.hasClass('gif2html5-extremely-large-gif')) {
-						$videoContainer.addClass('playable')
-							.on('click', function(evt) {
-								evt.stopPropagation();
-								$video.get(0).play();
-							}
-						);
-					} else {
-						fallbackGif($video);
-					}
+				if ($video.hasClass('gif2html5-extremely-large-gif')) {
+					$videoContainer.addClass('playable')
+						.on('click', function(evt) {
+							evt.stopPropagation();
+							fallbackGif($video);
+						}
+					);
 				} else {
-					$video.get(0).play();
+					fallbackGif($video);
 				}
 			}
 		}
