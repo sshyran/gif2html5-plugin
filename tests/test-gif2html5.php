@@ -375,18 +375,18 @@ class Test_Gif2Html5 extends WP_UnitTestCase {
 
 	function test_mp4_url_filter() {
 		Gif2Html5()->set_mp4_url( $this->gif_id, 'http://s3.amazon.com/bucket/folder/mp4.mp4' );
-		add_filter('gif2html5_mp4_url', function($url) {
+		add_filter( 'gif2html5_mp4_url', function( $url ) {
 			return 'http://assets.cloudfront.net/folder/mp4.mp4';
-		}, 10 ,1);
+		}, 10 ,1 );
 		$mp4 = Gif2Html5()->get_mp4_url( $this->gif_id );
 		$this->assertEquals( $mp4, 'http://assets.cloudfront.net/folder/mp4.mp4' );
 	}
 
 	function test_snapshot_url_filter() {
 		Gif2Html5()->set_snapshot_url( $this->gif_id, 'http://example.com/snapshot.png' );
-		add_filter('gif2html5_snapshot_url', function($url) {
+		add_filter( 'gif2html5_snapshot_url', function( $url ) {
 			return 'http://assets.cloudfront.net/folder/snapshot.png';
-		}, 10 ,1);
+		}, 10 ,1 );
 		$snapshot = Gif2Html5()->get_snapshot_url( $this->gif_id );
 		$this->assertEquals( $snapshot, 'http://assets.cloudfront.net/folder/snapshot.png' );
 	}
